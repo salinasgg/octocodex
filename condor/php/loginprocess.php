@@ -6,14 +6,27 @@
  * Retorna respuestas JSON para el frontend
  */
 
-// Incluir configuración de base de datos
-require_once 'config_bd.php';
+// Configuración de errores para desarrollo
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Configuración de seguridad y headers
 header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('X-XSS-Protection: 1; mode=block');
+
+// Manejar preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Incluir configuración de base de datos
+require_once 'config_bd.php';
 
 // Iniciar sesión si no está iniciada
 if (session_status() == PHP_SESSION_NONE) {
@@ -274,7 +287,14 @@ try {
 } catch (Exception $e) {
     // Registrar error en el log
     error_log("Error en loginprocess.php: " . $e->getMessage());
-    // Retornar error genérico al cliente
-    echo JsonResponse::error('Error interno del servidor', 500);
+    error_log("Stack trace: " . $e->getTraceAsString());
+    
+    // Retornar error más detallado en desarrollo
+    $errorMessage = 'Error interno del servidor';
+    if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) {
+        $errorMessage = 'Error: ' . $e->getMessage();
+    }
+    
+    echo JsonResponse::error($errorMessage, 500);
 }
 ?>

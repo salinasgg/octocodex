@@ -131,7 +131,7 @@ $(document).ready(function () {
             url: 'php/loginprocess.php', // URL de tu archivo PHP
             data: formData,
             dataType: 'json',
-            timeout: 10000, // 10 segundos de timeout
+           // timeout: 10000, // 10 segundos de timeout
             beforeSend: function() {
                 setLoadingState(true);
             },

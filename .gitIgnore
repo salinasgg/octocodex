@@ -2,6 +2,7 @@
 
 # ignoramos los archivos .zip
 *.zip
+*.sql
 
 # ignoramos los archivos sql
 u802689289_octocodex_db.sql
