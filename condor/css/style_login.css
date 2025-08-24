@@ -1,0 +1,471 @@
+        /* ===== VARIABLES CSS PERSONALIZADAS ===== */
+        /* Definir colores y valores reutilizables para mantener consistencia en todo el diseño */
+        :root {
+            --primary-color: #8b5cf6;        /* Color principal violeta */
+            --primary-dark: #7c3aed;         /* Variante más oscura del color principal */
+            --primary-light: #a78bfa;        /* Variante más clara del color principal */
+            --secondary-color: #f8fafc;      /* Color de fondo secundario (gris muy claro) */
+            --text-dark: #1e293b;            /* Color para texto principal (gris oscuro) */
+            --text-light: #64748b;           /* Color para texto secundario (gris medio) */
+            --border-color: #e2e8f0;         /* Color para bordes (gris claro) */
+            --success-color: #10b981;        /* Color para mensajes de éxito (verde) */
+            --error-color: #ef4444;          /* Color para mensajes de error (rojo) */
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);      /* Sombra estándar */
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Sombra grande */
+        }
+
+        /* ===== RESET Y ESTILOS GENERALES ===== */
+        /* Eliminar márgenes y padding por defecto del navegador */
+        * {
+            margin: 0;                       /* Eliminar márgenes externos */
+            padding: 0;                      /* Eliminar padding interno */
+            box-sizing: border-box;          /* Incluir padding y border en el ancho total */
+        }
+
+        /* Estilos base del cuerpo de la página */
+        body {
+            font-family: 'Inter', sans-serif; /* Fuente moderna y legible */
+            background: #f8fafc;             /* Fondo gris muy claro */
+            min-height: 100vh;               /* Altura mínima del 100% de la ventana */
+            overflow-x: hidden;              /* Ocultar scroll horizontal */
+        }
+
+        /* ===== CONTENEDOR PRINCIPAL ===== */
+        /* Contenedor que ocupa toda la pantalla y organiza el layout */
+        .login-container {
+            min-height: 100vh;               /* Altura mínima del 100% de la ventana */
+            display: flex;                   /* Usar flexbox para layout horizontal */
+            align-items: stretch;            /* Estirar elementos para igualar altura */
+        }
+
+        /* ===== COLUMNA IZQUIERDA - IMAGEN/FONDO ===== */
+        /* Columna izquierda con gradiente y animaciones */
+        .login-image {
+            flex: 1;                         /* Ocupar la mitad del espacio disponible */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%); /* Gradiente violeta */
+            position: relative;              /* Posicionamiento relativo para elementos hijos */
+            display: flex;                   /* Flexbox para centrar contenido */
+            align-items: center;             /* Centrar verticalmente */
+            justify-content: center;         /* Centrar horizontalmente */
+            overflow: hidden;                /* Ocultar contenido que se salga */
+        }
+
+        /* ===== PATRÓN DE FONDO ANIMADO ===== */
+        /* Efecto de fondo con gradientes radiales que se mueven */
+        .login-image::before {
+            content: '';                     /* Contenido vacío para el pseudo-elemento */
+            position: absolute;              /* Posicionamiento absoluto */
+            top: 0;                          /* Posición desde arriba */
+            left: 0;                         /* Posición desde la izquierda */
+            right: 0;                        /* Posición desde la derecha */
+            bottom: 0;                       /* Posición desde abajo */
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),    /* Círculo 1 */
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),    /* Círculo 2 */
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);   /* Círculo 3 */
+            animation: float 6s ease-in-out infinite; /* Animación continua de flotación */
+        }
+
+        /* ===== ANIMACIÓN DE FLOTACIÓN ===== */
+        /* Definir la animación que mueve el fondo */
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); /* Posición inicial y final */
+            }
+            50% { 
+                transform: translateY(-20px) rotate(1deg); /* Posición intermedia (sube y rota) */
+            }
+        }
+
+        /* ===== CONTENIDO DE LA IMAGEN ===== */
+        /* Contenedor del texto en la columna izquierda */
+        .image-content {
+            position: relative;              /* Posicionamiento relativo */
+            z-index: 2;                      /* Capa superior al fondo */
+            text-align: center;              /* Centrar texto */
+            color: white;                    /* Color de texto blanco */
+            padding: 2rem;                   /* Espaciado interno */
+        }
+
+        /* Título principal en la columna izquierda */
+        .image-content h1 {
+            font-size: 3.5rem;               /* Tamaño de fuente grande */
+            font-weight: 800;                /* Peso de fuente extra bold */
+            margin-bottom: 1rem;             /* Margen inferior */
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra de texto para profundidad */
+        }
+
+        /* Párrafo descriptivo en la columna izquierda */
+        .image-content p {
+            font-size: 1.2rem;               /* Tamaño de fuente mediano */
+            font-weight: 300;                /* Peso de fuente light */
+            opacity: 0.9;                    /* Transparencia sutil */
+            max-width: 400px;                /* Ancho máximo para legibilidad */
+            margin: 0 auto;                  /* Centrar horizontalmente */
+            line-height: 1.6;                /* Espaciado entre líneas */
+        }
+
+        /* ===== ICONOS FLOTANTES ===== */
+        /* Iconos decorativos que flotan en el fondo */
+        .floating-icon {
+            position: absolute;              /* Posicionamiento absoluto */
+            font-size: 2rem;                 /* Tamaño de icono */
+            color: rgba(255, 255, 255, 0.1); /* Color blanco con transparencia */
+            animation: floatIcon 8s ease-in-out infinite; /* Animación de flotación */
+        }
+
+        /* Posicionar cada icono en diferentes lugares */
+        .floating-icon:nth-child(1) { top: 20%; left: 20%; animation-delay: 0s; }    /* Primer icono */
+        .floating-icon:nth-child(2) { top: 60%; right: 20%; animation-delay: 2s; }   /* Segundo icono */
+        .floating-icon:nth-child(3) { bottom: 20%; left: 60%; animation-delay: 4s; } /* Tercer icono */
+
+        /* ===== ANIMACIÓN DE ICONOS FLOTANTES ===== */
+        /* Animación que hace que los iconos floten y roten */
+        @keyframes floatIcon {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); opacity: 0.1; /* Estado inicial y final */
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg); opacity: 0.3; /* Estado intermedio */
+            }
+        }
+
+        /* ===== COLUMNA DERECHA - FORMULARIO ===== */
+        /* Columna derecha que contiene el formulario de login */
+        .login-form {
+            flex: 1;                         /* Ocupar la mitad del espacio disponible */
+            display: flex;                   /* Flexbox para centrar el formulario */
+            align-items: center;             /* Centrar verticalmente */
+            justify-content: center;         /* Centrar horizontalmente */
+            padding: 2rem;                   /* Espaciado interno */
+            background: white;               /* Fondo blanco */
+        }
+
+        /* Contenedor del formulario */
+        .form-container {
+            width:100%;                     /* Ancho completo */
+            max-width: 400px;                /* Ancho máximo para legibilidad */
+            padding: 2rem;                   /* Espaciado interno */
+            
+        }
+
+        /* ===== HEADER DEL FORMULARIO ===== */
+        /* Encabezado del formulario con título y descripción */
+        .form-header {
+            text-align: center;              /* Centrar texto */
+            margin-bottom: 2.5rem;           /* Margen inferior */
+        }
+
+        /* Título del formulario */
+        .form-header h2 {
+            font-size: 2.5rem;               /* Tamaño de fuente grande */
+            font-weight: 700;                /* Peso de fuente bold */
+            color: var(--text-dark);         /* Color de texto oscuro */
+            margin-bottom: 0.5rem;           /* Margen inferior */
+        }
+
+        /* Descripción del formulario */
+        .form-header p {
+            color: var(--text-light);        /* Color de texto claro */
+            font-size: 1rem;                 /* Tamaño de fuente normal */
+        }
+
+        /* ===== CAMPOS DEL FORMULARIO ===== */
+        /* Contenedor de cada campo de entrada */
+        .form-floating {
+            margin-bottom: 1.5rem;           /* Margen inferior entre campos */
+            position: relative;              /* Posicionamiento relativo para iconos */
+        }
+
+        /* Estilos de los campos de entrada */
+        .form-floating input {
+            border: 2px solid var(--border-color); /* Borde gris claro */
+            border-radius: 12px;             /* Bordes redondeados */
+            padding: 1rem 1rem 1rem 3rem;    /* Padding con espacio para icono */
+            font-size: 1rem;                 /* Tamaño de fuente */
+            transition: all 0.3s ease;       /* Transición suave para cambios */
+            background: var(--secondary-color); /* Fondo gris muy claro */
+        }
+
+        /* Estilos cuando el campo tiene foco */
+        .form-floating input:focus {
+            border-color: var(--primary-color); /* Borde violeta al enfocar */
+            box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25); /* Sombra violeta */
+            background: white;               /* Fondo blanco al enfocar */
+        }
+
+        /* Etiquetas de los campos */
+        .form-floating label {
+            color: var(--text-light);        /* Color de texto claro */
+            font-weight: 500;                /* Peso de fuente medium */
+            padding-left: 3rem;              /* Padding para alinear con el texto */
+        }
+
+        /* ===== ICONOS EN LOS CAMPOS ===== */
+        /* Iconos que aparecen dentro de los campos de entrada */
+        .input-icon {
+            position: absolute;              /* Posicionamiento absoluto */
+            left: 1rem;                      /* Distancia desde la izquierda */
+            top: 50%;                        /* Centrar verticalmente */
+            transform: translateY(-50%);     /* Ajuste fino para centrado */
+            color: var(--text-light);        /* Color gris */
+            z-index: 3;                      /* Capa superior */
+            transition: color 0.3s ease;     /* Transición de color */
+        }
+
+        /* Cambiar color del icono cuando el campo tiene foco */
+        .form-floating input:focus + .input-icon {
+            color: var(--primary-color);     /* Color violeta al enfocar */
+        }
+
+        /* ===== CHECKBOX PERSONALIZADO ===== */
+        /* Contenedor del checkbox "Recordarme" */
+        .form-check {
+            margin: 1.5rem 0;                /* Margen vertical */
+        }
+
+        /* Estilos del checkbox */
+        .form-check-input {
+            border: 2px solid var(--border-color); /* Borde gris */
+            border-radius: 6px;              /* Bordes ligeramente redondeados */
+        }
+
+        /* Estilos cuando el checkbox está marcado */
+        .form-check-input:checked {
+            background-color: var(--primary-color); /* Fondo violeta */
+            border-color: var(--primary-color);     /* Borde violeta */
+        }
+
+        /* Etiqueta del checkbox */
+        .form-check-label {
+            color: var(--text-light);        /* Color de texto claro */
+            font-weight: 500;                /* Peso de fuente medium */
+        }
+
+        /* ===== BOTÓN DE ENVÍO ===== */
+        /* Botón principal para enviar el formulario */
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); /* Gradiente violeta */
+            border: none;                    /* Sin borde */
+            border-radius: 12px;             /* Bordes redondeados */
+            padding: 1rem 2rem;              /* Padding interno */
+            font-weight: 600;                /* Peso de fuente semi-bold */
+            font-size: 1.1rem;               /* Tamaño de fuente */
+            color: white;                    /* Color de texto blanco */
+            width: 100%;                     /* Ancho completo */
+            transition: all 0.3s ease;       /* Transición suave */
+            position: relative;              /* Posicionamiento relativo */
+            overflow: hidden;                /* Ocultar contenido que se salga */
+        }
+
+        /* Efecto hover del botón */
+        .btn-login:hover {
+            transform: translateY(-2px);     /* Levantar ligeramente */
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4); /* Sombra violeta */
+            color: white;                    /* Mantener texto blanco */
+        }
+
+        /* Efecto cuando se presiona el botón */
+        .btn-login:active {
+            transform: translateY(0);        /* Volver a posición normal */
+        }
+
+        /* Estilos cuando el botón está deshabilitado */
+        .btn-login:disabled {
+            opacity: 0.6;                    /* Transparencia */
+            cursor: not-allowed;             /* Cursor de no permitido */
+            transform: none;                 /* Sin transformación */
+        }
+
+        /* ===== ANIMACIÓN DE CARGA ===== */
+        /* Estilos para el estado de carga del botón */
+        .btn-login.loading {
+            pointer-events: none;            /* Deshabilitar interacciones */
+        }
+
+        /* Spinner de carga que aparece en el botón */
+        .btn-login.loading::after {
+            content: '';                     /* Contenido vacío */
+            position: absolute;              /* Posicionamiento absoluto */
+            width: 20px;                     /* Ancho del spinner */
+            height: 20px;                    /* Alto del spinner */
+            top: 50%;                        /* Centrar verticalmente */
+            left: 50%;                       /* Centrar horizontalmente */
+            margin-left: -10px;              /* Ajuste fino horizontal */
+            margin-top: -10px;               /* Ajuste fino vertical */
+            border: 2px solid transparent;   /* Borde transparente */
+            border-top: 2px solid white;     /* Borde superior blanco */
+            border-radius: 50%;              /* Forma circular */
+            animation: spin 1s linear infinite; /* Animación de rotación */
+        }
+
+        /* ===== ANIMACIÓN DE ROTACIÓN ===== */
+        /* Definir la animación de rotación del spinner */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }   /* Rotación inicial */
+            100% { transform: rotate(360deg); } /* Rotación completa */
+        }
+
+        /* ===== ENLACES ADICIONALES ===== */
+        /* Contenedor de enlaces como "Regístrate" y "Olvidé contraseña" */
+        .form-links {
+            text-align: center;              /* Centrar texto */
+            margin-top: 2rem;                /* Margen superior */
+        }
+
+        /* Estilos de los enlaces */
+        .form-links a {
+            color: var(--primary-color);     /* Color violeta */
+            text-decoration: none;           /* Sin subrayado */
+            font-weight: 500;                /* Peso de fuente medium */
+            transition: color 0.3s ease;     /* Transición de color */
+        }
+
+        /* Efecto hover de los enlaces */
+        .form-links a:hover {
+            color: var(--primary-dark);      /* Color violeta más oscuro */
+        }
+
+        /* ===== SEPARADOR ===== */
+        /* Línea separadora con texto "o continúa con" */
+        .divider {
+            margin: 2rem 0;                  /* Margen vertical */
+            text-align: center;              /* Centrar texto */
+            position: relative;              /* Posicionamiento relativo */
+        }
+
+        /* Línea horizontal del separador */
+        .divider::before {
+            content: '';                     /* Contenido vacío */
+            position: absolute;              /* Posicionamiento absoluto */
+            top: 50%;                        /* Centrar verticalmente */
+            left: 0;                         /* Desde la izquierda */
+            right: 0;                        /* Hasta la derecha */
+            height: 1px;                     /* Altura de 1 píxel */
+            background: var(--border-color); /* Color gris claro */
+        }
+
+        /* Texto del separador */
+        .divider span {
+            background: white;               /* Fondo blanco para tapar la línea */
+            padding: 0 1rem;                 /* Padding horizontal */
+            color: var(--text-light);        /* Color de texto claro */
+            font-size: 0.9rem;               /* Tamaño de fuente pequeño */
+        }
+
+        /* ===== BOTONES SOCIALES ===== */
+        /* Contenedor de botones de redes sociales */
+        .social-buttons {
+            display: flex;                   /* Flexbox para layout horizontal */
+            gap: 1rem;                       /* Espacio entre botones */
+            margin-top: 1rem;                /* Margen superior */
+        }
+
+        /* Estilos de los botones sociales */
+        .btn-social {
+            flex: 1;                         /* Ocupar espacio igual */
+            border: 2px solid var(--border-color); /* Borde gris */
+            border-radius: 12px;             /* Bordes redondeados */
+            padding: 0.75rem;                /* Padding interno */
+            background: white;               /* Fondo blanco */
+            color: var(--text-dark);         /* Color de texto oscuro */
+            text-decoration: none;           /* Sin subrayado */
+            text-align: center;              /* Centrar texto */
+            font-weight: 500;                /* Peso de fuente medium */
+            transition: all 0.3s ease;       /* Transición suave */
+        }
+
+        /* Efecto hover de los botones sociales */
+        .btn-social:hover {
+            border-color: var(--primary-color); /* Borde violeta */
+            color: var(--primary-color);     /* Color de texto violeta */
+            transform: translateY(-1px);     /* Levantar ligeramente */
+        }
+
+        /* ===== MENSAJES DE ERROR/ÉXITO ===== */
+        /* Contenedor de alertas y mensajes */
+        .alert {
+            border-radius: 12px;             /* Bordes redondeados */
+            border: none;                    /* Sin borde */
+            padding: 1rem;                   /* Padding interno */
+            margin-bottom: 1.5rem;           /* Margen inferior */
+            display: none;                   /* Oculto por defecto */
+        }
+
+        /* Estilos para mensajes de éxito */
+        .alert-success {
+            background: #ecfdf5;             /* Fondo verde muy claro */
+            color: #065f46;                  /* Color de texto verde oscuro */
+        }
+
+        /* Estilos para mensajes de error */
+        .alert-danger {
+            background: #fef2f2;             /* Fondo rojo muy claro */
+            color: #991b1b;                  /* Color de texto rojo oscuro */
+        }
+
+        /* ===== DISEÑO RESPONSIVE ===== */
+        /* Estilos para pantallas pequeñas (móviles y tablets) */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;      /* Cambiar a layout vertical */
+            }
+
+            .login-image {
+                min-height: 200px;           /* Altura mínima reducida */
+                flex: none;                  /* No usar flex */
+            }
+
+            .image-content h1 {
+                font-size: 2.5rem;           /* Tamaño de título reducido */
+            }
+
+            .form-container {
+                padding: 1rem;               /* Padding reducido */
+            }
+
+            .form-header h2 {
+                font-size: 2rem;             /* Tamaño de título reducido */
+            }
+
+            .social-buttons {
+                flex-direction: column;      /* Botones sociales en columna */
+            }
+        }
+
+        /* ===== ANIMACIONES DE ENTRADA ===== */
+        /* Animación de entrada para la columna del formulario */
+        .login-form {
+            animation: slideInRight 0.8s ease-out; /* Deslizar desde la derecha */
+        }
+
+        /* Animación de entrada para la columna de imagen */
+        .login-image {
+            animation: slideInLeft 0.8s ease-out; /* Deslizar desde la izquierda */
+        }
+
+        /* ===== ANIMACIÓN DESLIZAR DESDE IZQUIERDA ===== */
+        /* Definir la animación de deslizamiento desde la izquierda */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;                  /* Invisible al inicio */
+                transform: translateX(-50px); /* Posición inicial fuera de pantalla */
+            }
+            to {
+                opacity: 1;                  /* Visible al final */
+                transform: translateX(0);    /* Posición final normal */
+            }
+        }
+
+        /* ===== ANIMACIÓN DESLIZAR DESDE DERECHA ===== */
+        /* Definir la animación de deslizamiento desde la derecha */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;                  /* Invisible al inicio */
+                transform: translateX(50px);  /* Posición inicial fuera de pantalla */
+            }
+            to {
+                opacity: 1;                  /* Visible al final */
+                transform: translateX(0);    /* Posición final normal */
+            }
+        }

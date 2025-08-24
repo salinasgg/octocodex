@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Octocodex</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilo.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: white;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        } */
+
+        /* Portfolio Section */
+        .portfolio {
+            background: #f8fafc;
+            padding: 5rem 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: #e2e8f0;
+            color: #64748b;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .portfolio-image {
+            height: 350px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portfolio-image::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        .portfolio-content {
+            padding: 1.5rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a202c;
+        }
+
+        .portfolio-description {
+            color: #64748b;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .portfolio-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: #e2e8f0;
+            color: #64748b;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 2rem;
+            background: white;
+            text-align: center;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .skills {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .skill {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-link {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #667eea;
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo"><img src="../logo/logo.png" alt="OctoBytes" class="logo" width="40px" height="40px"> Portfolio | OctoCodex</div>
+            <!--<div class="logo"><img src="../logo/logo.png" alt="OctoBytes" class="logo" width="50px" height="50px"Portfolio | OctoCodex</div>-->
+            <ul class="nav-links">
+                <li><a href="../index.html">Principal</a></li>
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#portfolio">Proyectos</a></li>
+                <li><a href="#about">Acerca</a></li>
+                <li><a href="#contact">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Diseño & Desarrollo Creativo</h1>
+            <p>Transformamos ideas en experiencias digitales únicas y memorables. Especializado en diseño web, branding,
+                desarrollo front-end, consultoria SAP y Marketing Digital </p>
+            <a href="#portfolio" class="cta-button">Ver nuestro Trabajo</a>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title reveal">Nuestros Proyectos</h2>
+
+            <!-- <div class="filter-buttons reveal">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="web">Web Design</button>
+                <button class="filter-btn" data-filter="branding">Branding</button>
+                <button class="filter-btn" data-filter="mobile">Mobile App</button>
+                <button class="filter-btn" data-filter="print">Print Design</button>
+            </div> -->
+
+            <div class="portfolio-grid" id="portfolioGrid">
+                <!-- Portfolio items will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title reveal">Acerca de nosotros</h2>
+            <div class="about-content reveal">
+                <section class="hero-section">
+                    <h1 class="hero-title">Transformamos tus Ideas en Soluciones Digitales de Alto Impacto</h1>
+                    <p class="hero-subtitle">
+                        En <strong>OctoCodex</strong>, somos especialistas en el diseño y desarrollo de soluciones
+                        digitales a medida que impulsan el crecimiento de tu negocio. Nuestro equipo de expertos fusiona
+                        la creatividad con la tecnología para construir plataformas robustas, intuitivas y visualmente
+                        atractivas.
+                    </p>
+                </section>
+
+                <section class="services-section">
+                    <h2 class="services-title">Nos dedicamos a:</h2>
+
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <h3 class="service-title">Diseño y Desarrollo de Páginas Web</h3>
+                            <p class="service-description">
+                                Creamos sitios web modernos y optimizados que no solo captan la atención de tus
+                                visitantes, sino que también ofrecen una experiencia de usuario excepcional.
+                            </p>
+                        </div>
+
+                        <div class="service-card">
+                            <h3 class="service-title">Desarrollo de Aplicaciones Móviles</h3>
+                            <p class="service-description">
+                                Construimos aplicaciones móviles innovadoras para iOS y Android, diseñadas para expandir
+                                tu alcance y mantener a tus clientes conectados en todo momento.
+                            </p>
+                        </div>
+
+                        <div class="service-card">
+                            <h3 class="service-title">Sistemas de Gestión a Medida</h3>
+                            <p class="service-description">
+                                Implementamos sistemas de gestión eficientes que optimizan tus procesos internos,
+                                mejoran la productividad y te permiten tomar decisiones basadas en datos precisos.
+                            </p>
+                        </div>
+
+                        <div class="service-card">
+                            <h3 class="service-title">Plataformas de E-commerce</h3>
+                            <p class="service-description">
+                                Desarrollamos tiendas online seguras y escalables, equipadas con todas las herramientas
+                                necesarias para que tu negocio crezca en el mercado digital.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="closing-section">
+                        <p class="closing-text">
+                            Nuestro compromiso es convertir tu visión en una realidad digital funcional y rentable,
+                            ayudándote a destacar en un mercado competitivo.
+                        </p>
+                        <a href="https://wa.me/5491138773322" class="cta-button">Contáctanos Ahora</a>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="social-links">
+                <!-- <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-dribbble"></i></a>-->
+                <a href="https://www.facebook.com/profile.php?id=61579219654231" class="social-link"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/octocodex" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/5491138773322" class="social-link" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p>&copy; 2025 OctoCodex. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalContent">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Portfolio data
+            const portfolioData = [
+                {
+                    id: 1,
+                    title: "Tienda Online",
+                    image: "anow.png",
+                    description: "Diseño y desarrollo de una plataforma de comercio electrónico con interfaz intuitiva y experiencia de usuario optimizada.",
+                    category: "web",
+                    tags: ["HTML", "CSS3", "Bootstrap5", "Jquery", "PHP", "MySQL"],
+                    link: "https://www.anowstore.com",
+                    details: "En ANOW_STORE, te invitamos a explorar una cuidadosa selección de productos importados de alta calidad, traídos directamente para ti. Nos especializamos en conectar la pasión por la novedad con la conveniencia de la compra online, ofreciéndote acceso a artículos únicos que no encontrarás en tiendas locales. Nuestro catálogo, en constante evolución, abarca desde la última tecnología y electrodomésticos innovadores hasta artículos de moda y hogar con diseños exclusivos. Cada producto es elegido por su calidad, funcionalidad y su capacidad para enriquecer tu día a día. En ANOW_STORE, creemos que la distancia no debe ser un obstáculo para obtener lo que deseas. Por eso, garantizamos una experiencia de compra fluida, con envíos seguros y un servicio al cliente dedicado. Explora, inspira y adquiere productos excepcionales de todo el mundo. Bienvenido a ANOW_STORE, donde la calidad internacional está a solo un clic de distancia."
+                },
+                {
+                    id: 2,
+                    title: "Sistema de Gestión",
+                    image: "anow_negro.png",
+                    description: "Creación de identidad visual completa para startup tecnológica, incluyendo logo, colores y guía de marca.",
+                    category: "branding",
+                    tags: ["HTML", "CSS3", "Bootstrap5", "Jquery", "PHP", "MySQL"],
+                    link: "https://www.anowstore.com/admin",
+                    details: "Sistema de gestión para la empresa ANOW_STORE. El proyecto incluye un panel de administración para la gestión de productos, ventas, clientes y pedidos. También incluye un sistema de login y registro para los usuarios."
+                },
+                 {
+                     id: 3,
+                     title: "Sanacion Integral y Bienestar",
+                     image: "neuro.png",
+                     description: "Especialista en Naturoterapias, Hipnosis Ericksoniana y Programación Neurolingüística. Acompañándote en tu camino hacia el equilibrio físico, mental y espiritual.",
+                     category: "mobile",
+                     link: "https://www.octocodex.com/neuro",
+                     tags: ["HTML", "CSS3", "Bootstrap5", "Jquery", "PHP", "MySQL"],
+                     details: "Tratamientos naturales integrales que trabajan en armonía con tu cuerpo, utilizando el poder sanador de la naturaleza para restaurar tu bienestar"
+                 }
+                // {
+                //     id: 4,
+                //     title: "Portfolio Arquitectura",
+                //     image: "anow.png",
+                //     description: "Sitio web minimalista para estudio de arquitectura, enfocado en mostrar proyectos de manera elegante.",
+                //     category: "web",
+                //     tags: ["HTML5", "CSS3", "JavaScript", "Photography"],
+                //     details: "Website elegante y minimalista para un estudio de arquitectura. El diseño se centra en la fotografía de alta calidad de los proyectos, con navegación fluida y animaciones sutiles que complementan el contenido visual."
+                // },
+                // {
+                //     id: 5,
+                //     title: "Catálogo Productos 2025",
+                //     image: "anow.png",
+                //     description: "Diseño editorial para catálogo de productos con layout moderno y fotografía profesional.",
+                //     category: "print",
+                //     tags: ["InDesign", "Photography", "Print Design", "Layout"],
+                //     details: "Catálogo impreso de 120 páginas para empresa manufacturera. El proyecto incluyó dirección de arte, sesión fotográfica de productos, diseño editorial y preparación para impresión offset."
+                // },
+                // {
+                //     id: 6,
+                //     title: "Dashboard Analytics",
+                //     image: "anow.png",
+                //     description: "Interface de usuario para dashboard de analíticas con visualización de datos interactiva.",
+                //     category: "web",
+                //     tags: ["Vue.js", "D3.js", "Data Visualization", "UX"],
+                //     details: "Dashboard completo para visualización de datos de marketing digital. Incluye gráficos interactivos, filtros avanzados, exportación de reportes y diseño responsive optimizado para diferentes dispositivos."
+                // },
+                // {
+                //     id: 7,
+                //     title: "App Delivery Food",
+                //     image: "anow.png",
+                //     description: "Aplicación de delivery de comida con geolocalización y sistema de pagos integrado.",
+                //     category: "mobile",
+                //     tags: ["Flutter", "GPS", "Payment", "Real-time"],
+                //     details: "Aplicación completa de delivery de comida que conecta restaurantes con usuarios. Incluye geolocalización en tiempo real, sistema de pagos múltiples, chat con repartidores y sistema de calificaciones."
+                // },
+                // {
+                //     id: 8,
+                //     title: "Rebranding Restaurant Chain",
+                //     image: "anow.png",
+                //     description: "Renovación completa de imagen para cadena de restaurantes, incluyendo señalética y packaging.",
+                //     category: "branding",
+                //     tags: ["Rebranding", "Packaging", "Signage", "Food"],
+                //     details: "Proyecto de rebranding completo para cadena de restaurantes familiares. Incluyó nuevo logo, colores corporativos, diseño de menús, packaging para delivery, señalética de locales y uniformes para staff."
+                // }
+            ];
+
+            // Generate portfolio items
+            function generatePortfolioItems(data) {
+                const grid = $('#portfolioGrid');
+                grid.empty();
+
+                data.forEach(item => {
+                    // Debug: verificar si item.image existe
+                    console.log(`Item ${item.id}: image = ${item.image}`);
+
+                    // Validar que item.image existe, si no, usar una imagen por defecto
+                    const imageSrc = item.image ? `img/${item.image}` : 'img/anow.png';
+
+                    // Debug: mostrar la URL completa que se está generando
+                    console.log(`Item ${item.id}: URL completa = ${imageSrc}`);
+
+                    const portfolioItem = $(`
+                        <div class="portfolio-item reveal" data-category="${item.category}" data-id="${item.id}">
+                            <div class="portfolio-image">
+                                <img src="${imageSrc}" alt="${item.title}" onload="console.log('Imagen cargada exitosamente:', '${imageSrc}')" onerror="console.log('Error cargando imagen:', '${imageSrc}'); this.style.display='none'; this.parentElement.innerHTML='<div style=\\'height: 200px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white;\\'>Imagen no disponible</div>'">
+                            </div>
+                            <div class="portfolio-content">
+                                <h3 class="portfolio-title">${item.title}</h3>
+                                <p class="portfolio-description">${item.description}</p>
+                                <div class="portfolio-tags">
+                                    ${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                                                    <div class="portfolio-actions" style="text-align: center; margin-top: 1rem;">
+                            <a href="${item.link}" target="_blank" class="cta-button" style="display: inline-block; background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 0.8rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                                <i class="fas fa-external-link-alt" style="margin-right: 0.5rem;"></i>
+                                Visitar Sitio Web
+                            </a>
+                        </div><br>  
+                        </div>
+                    `);
+                    grid.append(portfolioItem);
+                });
+            }
+
+            // Initialize portfolio
+            generatePortfolioItems(portfolioData);
+
+            // Filter functionality
+            $('.filter-btn').click(function () {
+                const filter = $(this).data('filter');
+
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+
+                if (filter === 'all') {
+                    $('.portfolio-item').show().addClass('reveal');
+                } else {
+                    $('.portfolio-item').hide();
+                    $(`.portfolio-item[data-category="${filter}"]`).show().addClass('reveal');
+                }
+            });
+
+            // Modal functionality
+            $('.portfolio-grid').on('click', '.portfolio-item', function () {
+                const itemId = $(this).data('id');
+                const item = portfolioData.find(p => p.id === itemId);
+
+                if (item) {
+                    const modalContent = `
+                        <h2>${item.title}</h2>
+                        <div style="height: 200px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 10px; margin: 1rem 0;">
+                            <img src="img/${item.image}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                        </div>
+                        <p><strong>Categoría:</strong> ${item.category}</p>
+                        <p><strong>Descripción:</strong> ${item.description}</p>
+                        <p><strong>Detalles:</strong> ${item.details}</p>
+                        <div style="margin-top: 1rem;">
+                            <strong>Tecnologías:</strong>
+                            <div style="margin-top: 0.5rem;">
+                                ${item.tags.map(tag => `<span class="tag" style="margin-right: 0.5rem;">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    $('#modalContent').html(modalContent);
+                    $('#projectModal').fadeIn(300);
+                }
+            });
+
+            // Close modal
+            $('.modal-close, .modal').click(function (e) {
+                if (e.target === this) {
+                    $('#projectModal').fadeOut(300);
+                }
+            });
+
+            // Smooth scrolling
+            $('a[href^="#"]').click(function (e) {
+                e.preventDefault();
+                const target = $($(this).attr('href'));
+                if (target.length) {
+                    $('html, body').animate({
+                        scrollTop: target.offset().top - 80
+                    }, 800);
+                }
+            });
+
+            // Scroll reveal animation
+            function reveal() {
+                const reveals = $('.reveal');
+
+                reveals.each(function () {
+                    const windowHeight = $(window).height();
+                    const elementTop = $(this).offset().top;
+                    const elementVisible = 150;
+
+                    if (elementTop < $(window).scrollTop() + windowHeight - elementVisible) {
+                        $(this).addClass('active');
+                    }
+                });
+            }
+
+            $(window).scroll(reveal);
+            reveal(); // Initial check
+
+            // Header scroll effect
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    $('.header').css('background', 'rgba(255, 255, 255, 0.98)');
+                } else {
+                    $('.header').css('background', 'rgba(255, 255, 255, 0.95)');
+                }
+            });
+
+            // Add hover effects and micro-interactions
+            $('.portfolio-item').hover(
+                function () {
+                    $(this).find('.portfolio-image').css('transform', 'scale(1.05)');
+                },
+                function () {
+                    $(this).find('.portfolio-image').css('transform', 'scale(1)');
+                }
+            );
+
+            // Parallax effect for hero section
+            $(window).scroll(function () {
+                const scrolled = $(this).scrollTop();
+                const parallax = $('.hero');
+                const speed = scrolled * 0.5;
+
+                parallax.css('transform', 'translateY(' + speed + 'px)');
+            });
+        });
+    </script>
+</body>
+
+</html>
