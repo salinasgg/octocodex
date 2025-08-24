@@ -26,7 +26,7 @@
             
             <!-- Contenido de la imagen -->
             <div class="image-content">
-                <h1>Condor</h1>
+                <h1>OctoCodex</h1>
                 <p>Bienvenido de vuelta. Inicia sesión para acceder a tu cuenta y descubrir un mundo de posibilidades.</p>
             </div>
         </div>
