@@ -1,1 +1,8 @@
+
+
+// ignoramos los archivos .zip
 *.zip
+
+
+// Base de datos
+u802689289_octocodex_db.sql
