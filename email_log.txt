@@ -1,0 +1,8 @@
+2025-08-09 08:08:40 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: asdasd
+2025-08-09 08:11:53 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: cacacaca - Error enviando email: Error al enviar el email - mail() retornó false
+2025-08-09 08:12:03 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: cacacaca - Error enviando email: Error al enviar el email - mail() retornó false
+2025-08-09 08:12:33 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: cacacaca - Error enviando email: Error al enviar el email - mail() retornó false
+2025-08-09 08:16:37 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: fggggggggg
+2025-08-09 08:18:59 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: adsadasdasdasd - Error enviando email: Error al enviar el email - mail() retornó false
+2025-08-09 08:31:33 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: asdasdasdfsdf - Error enviando email: Error al enviar el email - mail() retornó false
+2025-08-09 08:31:39 - Mensaje guardado exitosamente desde: salinasgg@gmail.com - Asunto: asdasdasdfsdf - Error enviando email: Error al enviar el email - mail() retornó false
