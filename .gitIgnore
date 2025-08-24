@@ -1,0 +1,11 @@
+
+
+# ignoramos los archivos .zip
+*.zip
+
+# ignoramos los archivos sql
+u802689289_octocodex_db.sql
+
+# Ignoramos los .md que no sean readme
+CONFIGURAR_CORREOS_XAMPP.md
+CONFIGURAR_GMAIL_SMTP.md
