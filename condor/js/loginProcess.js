@@ -144,10 +144,12 @@ $(document).ready(function () {
                     
                     // Redirigir según el rol del usuario
                     setTimeout(function() {
-                        if (response.redirect) {
+                        if (response.data && response.data.redirect) {
+                            window.location.href = response.data.redirect;
+                        } else if (response.redirect) {
                             window.location.href = response.redirect;
                         } else {
-                            window.location.href = 'dashboard.html';
+                            window.location.href = 'dashboard.php';
                         }
                     }, 1500);
                     

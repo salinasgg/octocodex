@@ -254,7 +254,7 @@ try {
                 $redirectUrl = 'admin/dashboard.php';
                 break;
             case 'usuario':
-                $redirectUrl = 'user/dashboard.php';
+                $redirectUrl = 'usuario/dashboard.php';
                 break;
             default:
                 $redirectUrl = 'dashboard.php';

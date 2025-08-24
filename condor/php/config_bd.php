@@ -16,13 +16,19 @@ if (!defined('DB_CONFIG_LOADED')) {
 // ==================== CONFIGURACIÓN DE BASE DE DATOS ====================
 
 // Configuración del servidor de base de datos
-define('DB_HOST', 'localhost');        // Servidor de la base de datos (localhost para servidor local)
-define('DB_NAME', 'u802689289_octocodex_db');    // Nombre de la base de datos que vas a usar
-define('DB_USER', 'u802689289_octocodex');             // Usuario de MySQL (cambiar por tu usuario)
-define('DB_PASS', 'Cune2024!');                 // Contraseña de MySQL (cambiar por tu contraseña)
-define('DB_CHARSET', 'utf8mb4');       // Codificación de caracteres (utf8mb4 soporta emojis)
-//define('DB_PORT', 3306);               // Puerto de MySQL (3306 es el puerto por defecto)
+// define('DB_HOST', 'localhost');        // Servidor de la base de datos (localhost para servidor local)
+// define('DB_NAME', 'u802689289_octocodex_db');    // Nombre de la base de datos que vas a usar
+// define('DB_USER', 'u802689289_octocodex');             // Usuario de MySQL (cambiar por tu usuario)
+// define('DB_PASS', 'Cune2024!');                 // Contraseña de MySQL (cambiar por tu contraseña)
+// define('DB_CHARSET', 'utf8mb4');       // Codificación de caracteres (utf8mb4 soporta emojis)
+// define('DB_PORT', 3306);               // Puerto de MySQL (3306 es el puerto por defecto)
 
+define('DB_HOST', 'localhost');        // Servidor de la base de datos (localhost para servidor local)
+define('DB_NAME', 'octocodex_db');    // Nombre de la base de datos que vas a usar
+define('DB_USER', 'root');             // Usuario de MySQL (cambiar por tu usuario)
+define('DB_PASS', '');                 // Contraseña de MySQL (cambiar por tu contraseña)
+define('DB_CHARSET', 'utf8mb4');       // Codificación de caracteres (utf8mb4 soporta emojis)
+define('DB_PORT', 3306);
 
 // ==================== OPCIONES DE CONFIGURACIÓN PDO ====================
 
@@ -118,5 +124,5 @@ class Database {
         
         return $this->connection;
     }
-
+}
 ?>

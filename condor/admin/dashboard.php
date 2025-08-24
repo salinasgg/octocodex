@@ -11,7 +11,7 @@ session_start();
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     // Si no está logueado, redirigir al login
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -44,88 +44,9 @@ if (isset($_GET['logout'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/estilo_dashboard_admin.css">
     
-    <style>
-        :root {
-            --primary-color: #8b5cf6;
-            --primary-dark: #7c3aed;
-            --secondary-color: #f8fafc;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
-            --border-color: #e2e8f0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--secondary-color);
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar {
-            background: white;
-            min-height: calc(100vh - 76px);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar .nav-link {
-            color: var(--text-dark);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin: 0.25rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .main-content {
-            padding: 2rem;
-        }
-
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-        }
-
-        .stats-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-
-        .welcome-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-    </style>
 </head>
 <body>
 
@@ -133,9 +54,40 @@ if (isset($_GET['logout'])) {
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="#">
-                <i class="fas fa-rocket me-2"></i>Condor
+                <img src="../../logo/logo.png" alt="Logo" class="me-2" style="height: 35px;">Octocodex
             </a>
-            
+            <div class="row justify-content-center navbar-admin" >
+                <div class="col-auto">
+                    <ul class="nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Tools
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>Tool 1</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-wrench me-2"></i>Tool 2</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cogs me-2"></i>Tool 3</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                Requerimientos
+                            </a>
+                            <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-tools me-2"></i>Evolutivo </a>   </li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-wrench me-2"></i>Correctivo </a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cogs me-2"></i>Incidente</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link disabled" href="#">Disabled</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
             <div class="navbar-nav ms-auto">
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -145,7 +97,7 @@ if (isset($_GET['logout'])) {
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="?logout=1" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                        <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -190,7 +142,7 @@ if (isset($_GET['logout'])) {
                                 </div>
                             </div>
                             <div class="col">
-                                <h2 class="mb-1">¡Bienvenido, POR DEFECTO <?php echo htmlspecialchars($nombre_completo); ?>!</h2>
+                                <h2 class="mb-1">¡BienvenidA, Administrador <?php echo htmlspecialchars($nombre_completo); ?>!</h2>
                                 <p class="text-muted mb-0">
                                     <i class="fas fa-clock me-1"></i>
                                     Último acceso: <?php echo date('d/m/Y H:i', $login_time); ?>
@@ -338,9 +290,11 @@ if (isset($_GET['logout'])) {
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/logout.js"></script>
+    <script src="../js/logout.js"></script>
     <script>
         // Script para el dashboard
         console.log('Dashboard cargado correctamente');

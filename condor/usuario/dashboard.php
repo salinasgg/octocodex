@@ -11,7 +11,7 @@ session_start();
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     // Si no está logueado, redirigir al login
-    header('Location: index.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -145,7 +145,7 @@ if (isset($_GET['logout'])) {
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="?logout=1" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
+                        <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
                     </ul>
                 </div>
             </div>
@@ -154,31 +154,11 @@ if (isset($_GET['logout'])) {
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 px-0">
-                <div class="sidebar p-3">
-                    <nav class="nav flex-column">
-                        <a class="nav-link active" href="#">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-users me-2"></i>Usuarios
-                        </a>
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-chart-bar me-2"></i>Reportes
-                        </a>
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-cog me-2"></i>Configuración
-                        </a>
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-question-circle me-2"></i>Ayuda
-                        </a>
-                    </nav>
-                </div>
-            </div>
+
+
 
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10">
+            <div class="col-md-12 col-lg-12">
                 <div class="main-content">
                     
                     <!-- Welcome Section -->
@@ -190,7 +170,7 @@ if (isset($_GET['logout'])) {
                                 </div>
                             </div>
                             <div class="col">
-                                <h2 class="mb-1">¡Bienvenido, POR DEFECTO <?php echo htmlspecialchars($nombre_completo); ?>!</h2>
+                                <h2 class="mb-1">¡BienvenidA, USUARIO <?php echo htmlspecialchars($nombre_completo); ?>!</h2>
                                 <p class="text-muted mb-0">
                                     <i class="fas fa-clock me-1"></i>
                                     Último acceso: <?php echo date('d/m/Y H:i', $login_time); ?>
@@ -338,9 +318,11 @@ if (isset($_GET['logout'])) {
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/logout.js"></script>
+    <script src="../js/logout.js"></script>
     <script>
         // Script para el dashboard
         console.log('Dashboard cargado correctamente');
