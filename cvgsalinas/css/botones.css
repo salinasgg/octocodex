@@ -1,0 +1,20 @@
+.my-custom-button {
+    background-color: rgb(44, 83, 246);
+    border-color: rgb(44, 83, 246);
+    height: 40px;
+    transition: background-color 0.2s ease-in-out;
+    color: rgb(206, 200, 200);
+  }
+
+  .my-custom-button:hover {
+    background-color: rgb(59, 53, 241);
+    border-color: rgb(59, 53, 241);
+    height: 40px;
+    background-color: rgb(59, 53, 241);
+    color: white;
+  }
+
+  .icon{
+    width: 25px;
+    height: auto;
+  }
