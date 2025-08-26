@@ -46,9 +46,13 @@ if (isset($_GET['logout'])) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Estilos -->
     <link rel="stylesheet" href="css/estilo_dashboard_admin.css">
-    
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="css/enconstruccion.css">
+
 </head>
 <body>
+
+
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -94,7 +98,7 @@ if (isset($_GET['logout'])) {
                         <i class="fas fa-user-circle me-2"></i><?php echo htmlspecialchars($nombre_completo); ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="#" id="perfil-btn"><i class="fas fa-user me-2"></i>Mi Perfil</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Configuración</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión</a></li>
@@ -132,9 +136,13 @@ if (isset($_GET['logout'])) {
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10">
                 <div class="main-content">
-                    
+                    <div class="container-fluid">
+                        <div class="row construccion">
+                            
+                        </div>
+                    </div>
                     <!-- Welcome Section -->
-                    <div class="welcome-section">
+                    <!-- <div class="welcome-section">
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <div class="user-avatar">
@@ -152,10 +160,10 @@ if (isset($_GET['logout'])) {
                                 <span class="badge bg-primary fs-6"><?php echo ucfirst($rol === 'administrador' ? 'Administrador' : 'Usuario'); ?></span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Stats Cards -->
-                    <div class="row mb-4">
+                    <!-- <div class="row mb-4">
                         <div class="col-md-3 mb-3">
                             <div class="card stats-card">
                                 <div class="card-body">
@@ -219,10 +227,10 @@ if (isset($_GET['logout'])) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Content Cards -->
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-md-8 mb-4">
                             <div class="card">
                                 <div class="card-header bg-white">
@@ -283,21 +291,43 @@ if (isset($_GET['logout'])) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                 </div>
             </div>
         </div>
     </div>
 
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/logout.js"></script>
+    <script src="../js/perfil.js"></script>    
+    
     <script>
         // Script para el dashboard
         console.log('Dashboard cargado correctamente');
+        // Cargar el contenido de construccion.php en el div construccion
+        $(document).ready(function() {
+            $.ajax({
+                url: 'construccion.php',
+                method: 'GET',
+                success: function(response) {
+                    $('.construccion').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar construccion.php:', error);
+                    $('.construccion').html('<div class="alert alert-danger">Error al cargar el contenido</div>');
+                }
+            });
+        });
+        // Hacer el user_id disponible globalmente para otros scripts
+        window.userId = <?php echo $user_id; ?>;
+        
+        // También agregarlo como data attribute al body
+        $('body').attr('data-user-id', <?php echo $user_id; ?>);
         
         // Mostrar información del usuario en consola
         console.log('Usuario logueado:', {
