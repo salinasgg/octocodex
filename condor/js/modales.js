@@ -41,7 +41,7 @@ var ContenidoModalEditarPerfil = `
                     <?php endif; ?>
 
                     <!-- Formulario principal de edición -->
-                    <form id="formEditarPerfil" style="margin-left: 20px; margin-right: 20px;" method="POST" enctype="multipart/form-data">
+                    <form id="formEditarPerfil" style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px;" method="POST" enctype="multipart/form-data">
                         <!-- Sección para mostrar la foto de perfil actual -->
                         <div class="text-center mb-4">
                             <div class="current-avatar">
