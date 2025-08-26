@@ -1,8 +1,8 @@
 <?php
 // ===== CONTENIDO DE PERFIL PARA DASHBOARD =====
 
-// Obtener user_id de parámetros GET o sesión
-$userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
+// Obtener user_id de múltiples fuentes
+$userId = $_POST['user_id'] ?? $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
 
 if (!$userId) {
     echo '<div class="alert alert-danger">Error: No se proporcionó un ID de usuario válido.</div>';

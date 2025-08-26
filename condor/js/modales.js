@@ -41,13 +41,13 @@ var ContenidoModalEditarPerfil = `
                     <?php endif; ?>
 
                     <!-- Formulario principal de edición -->
-                    <form id="formEditarPerfil" method="POST" enctype="multipart/form-data">
+                    <form id="formEditarPerfil" style="margin-left: 20px; margin-right: 20px;" method="POST" enctype="multipart/form-data">
                         <!-- Sección para mostrar la foto de perfil actual -->
                         <div class="text-center mb-4">
                             <div class="current-avatar">
                                 
                                     <!-- Si hay foto de perfil, mostrarla -->
-                                    <img src=">" 
+                                    <img src="<?php echo htmlspecialchars($userData['us_foto_perfil']); ?>" 
                                          alt="Foto de perfil actual" 
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <i class="fas fa-user" style="display: none;"></i>
@@ -153,7 +153,13 @@ var ContenidoModalEditarPerfil = `
 $(document).ready(function() {
     // Obtener el ID del usuario desde el atributo data del body o desde la URL
     // Primero busca en el atributo data-user-id del body, luego en window.userId, si no encuentra nada usa null
-    let userIdPerfil = $('body').attr('data-user-id') || window.userId || null;
+    // Usar var para hacer la variable global y accesible desde todas las funciones
+    var userIdPerfil = $('body').attr('data-user-id') || window.userId || null;
+    
+    // Log inicial para debugging
+    console.log('Inicialización - userIdPerfil:', userIdPerfil);
+    console.log('Inicialización - data-user-id:', $('body').attr('data-user-id'));
+    console.log('Inicialización - window.userId:', window.userId);
 
     // Evento click para el botón "Editar Perfil"
     // Se ejecuta cuando el usuario hace clic en el botón con ID "btnEditarPerfil"
@@ -172,6 +178,16 @@ $(document).ready(function() {
 
         // Mostrar el modal usando el método modal() de Bootstrap
         $('#myModalEditarPerfil').modal('show');
+        
+        // Evento que se ejecuta cuando se cierra el modal (por cualquier medio)
+        // Este evento se dispara cuando el modal se oculta completamente
+        // Usar off() para evitar múltiples registros del mismo evento
+        $('#myModalEditarPerfil').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+            console.log('Modal cerrado, llamando a actualizarPerfil()...');
+            console.log('userIdPerfil en evento modal:', userIdPerfil);
+            console.log('Tipo de userIdPerfil en evento modal:', typeof userIdPerfil);
+            actualizarPerfil();
+        });
 
         // Verificar si el archivo CSS de edición ya está cargado en la página
         // document.querySelector('link[href="../css/style_editar.css"]') busca un elemento <link> con ese href
@@ -270,6 +286,49 @@ $(document).ready(function() {
         }
     }); // fin del evento click del botón "Editar Perfil"
 
+    // Función para actualizar el contenido del perfil
+    function actualizarPerfil() {
+        console.log('🔄 Función actualizarPerfil ejecutada');
+        
+        // Obtener el ID del usuario de las fuentes más confiables
+        let currentUserId = $('body').attr('data-user-id') || window.userId || userIdPerfil || null;
+        
+        console.log('🔍 Fuentes de user_id:');
+        console.log('  - data-user-id:', $('body').attr('data-user-id'));
+        console.log('  - window.userId:', window.userId);
+        console.log('  - userIdPerfil:', userIdPerfil);
+        console.log('  - currentUserId final:', currentUserId);
+        
+        // Verificar si currentUserId es válido
+        if (!currentUserId || currentUserId === 'null' || currentUserId === 'undefined' || currentUserId === '') {
+            console.error('❌ No se pudo obtener un ID de usuario válido');
+            return; // Salir de la función si no hay ID válido
+        }
+        
+        if ($(".main-content").length > 0) {
+            console.log('✅ Actualizando contenido del perfil con user_id:', currentUserId);
+            
+            // Usar AJAX explícito en lugar de .load() para mejor control
+            $.ajax({
+                url: '../perfil-content.php',
+                method: 'POST',
+                data: { user_id: currentUserId },
+                success: function(response) {
+                    console.log('✅ Perfil actualizado exitosamente');
+                    console.log('📊 Longitud de la respuesta:', response.length);
+                    $(".main-content").html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Error cargando perfil-content.php:', xhr.status, xhr.statusText);
+                    console.error('Response text:', xhr.responseText);
+                    console.error('Error completo:', error);
+                }
+            });
+        } else {
+            console.error('❌ Elemento .main-content no encontrado');
+        }
+    }
+
     // Función para inicializar el formulario de edición
     // Esta función configura los eventos del formulario cuando se envía
     function initializeEditForm() {
@@ -307,15 +366,14 @@ $(document).ready(function() {
                     // Mostrar el mensaje de respuesta del servidor al usuario
                     showMessage(response.mensaje, response.tipo);
                     
-                    // Si la actualización fue exitosa, cerrar el modal y actualizar solo el perfil
-                    if(response.tipo === 'success') {
-                        // Cerrar el modal después de un breve delay (1.5 segundos)
-                        setTimeout(() => {
-                            $('#myModalEditarPerfil').modal('hide'); // Ocultar el modal
-                            // Actualizar solo el contenido del perfil sin recargar toda la página
-                            $(".main-content").load('perfil-content.php', { user_id: userIdPerfil });
-                        }, 1500);
-                    }
+                                         // Si la actualización fue exitosa, cerrar el modal
+                     if(response.tipo === 'success') {
+                         // Cerrar el modal después de un breve delay (1.5 segundos)
+                         // El evento 'hidden.bs.modal' se encargará de actualizar el perfil automáticamente
+                         setTimeout(() => {
+                             $('#myModalEditarPerfil').modal('hide'); // Ocultar el modal
+                         }, 1500);
+                     }
                 },
                 error: function(xhr, status, error) {
                     // Función que se ejecuta si hay error en la petición
