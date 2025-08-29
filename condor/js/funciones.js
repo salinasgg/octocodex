@@ -66,7 +66,7 @@ function editUser(id) {
     console.log('🔍 ID del usuario a editar:', id);
     
     // Mostrar mensaje de carga
-    showMessage('Cargando datos del usuario...', 'info', 2000);
+    // showMessage('Cargando datos del usuario...', 'info', 2000);
     
     $.ajax({
         url: '../php/usuarios_info.php',
@@ -99,7 +99,7 @@ function editUser(id) {
                     $('body').addClass('modal-open');
                 }, 100);
                 
-                showMessage('Datos cargados correctamente', 'success', 2000);
+                // showMessage('Datos cargados correctamente', 'success', 2000);
             } else if (response.error) {
                 showMessage('Error: ' + response.error, 'error', 3000);
             } else {
