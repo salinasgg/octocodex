@@ -1,0 +1,278 @@
+/* ===== VARIABLES CSS GLOBALES ===== */
+:root {
+    /* Variable para el gradiente principal usado en toda la aplicación */
+    --gradiente-violeta: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
+}
+
+/* ===== RESET CSS ESPECÍFICO PARA LA TABLA DE USUARIOS ===== */
+.users-table-container * {
+    margin: 0;          /* Elimina márgenes por defecto */
+    padding: 0;         /* Elimina padding por defecto */
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
+}
+
+/* ===== ESTILOS DEL CUERPO ESPECÍFICOS PARA LA TABLA ===== */
+.users-table-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna y legible */
+    /* background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); Fondo degradado suave */
+    min-height: 100vh;  /* Altura mínima del 100% del viewport */
+    padding: 20px;      /* Espaciado interno del body */
+}
+
+/* ===== CONTENEDOR PRINCIPAL ESPECÍFICO PARA LA TABLA ===== */
+.users-table-container .container {
+    /* max-width: 1800px; */ /* Ancho máximo comentado para usar todo el ancho */
+    width: 100%;         /* Usa todo el ancho disponible */
+    margin: 0 auto;      /* Centra el contenedor horizontalmente */
+    background: rgba(255, 255, 255, 0.95); /* Fondo blanco semi-transparente */
+    border-radius: 20px; /* Bordes redondeados */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque del fondo */
+    overflow: hidden;    /* Oculta contenido que se salga del contenedor */
+}
+
+/* ===== CABECERA DE LA TABLA ===== */
+.users-table-container .header {
+    background: var(--gradiente-violeta); /* Usa la variable CSS del gradiente */
+    padding: 30px;       /* Espaciado interno */
+    text-align: center;  /* Centra el texto */
+    position: relative;  /* Posicionamiento relativo para elementos hijos */
+    overflow: hidden;    /* Oculta el pseudo-elemento que se sale */
+}
+
+/* ===== EFECTO DE FONDO ANIMADO EN LA CABECERA ===== */
+.users-table-container .header::before {
+    content: '';         /* Contenido vacío para el pseudo-elemento */
+    position: absolute;  /* Posicionamiento absoluto */
+    top: -50%;          /* Se extiende 50% arriba */
+    left: -50%;         /* Se extiende 50% a la izquierda */
+    width: 200%;        /* Ancho del 200% para cubrir todo */
+    height: 200%;       /* Alto del 200% para cubrir todo */
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); /* Gradiente radial */
+    animation: float 6s ease-in-out infinite; /* Animación continua de 6 segundos */
+}
+
+/* ===== ANIMACIÓN DE FLOTACIÓN ===== */
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); } /* Posición inicial y final */
+    50% { transform: translate(10px, -10px) rotate(5deg); } /* Posición intermedia con movimiento */
+}
+
+/* ===== TÍTULO PRINCIPAL ===== */
+.users-table-container .header h1 {
+    color: white;        /* Color del texto */
+    font-size: 2.5rem;  /* Tamaño de fuente grande */
+    font-weight: 700;   /* Peso de fuente bold */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Sombra del texto */
+    margin-bottom: 10px; /* Espaciado inferior */
+    position: relative;  /* Posicionamiento relativo */
+    z-index: 1;         /* Capa superior para estar sobre el pseudo-elemento */
+}
+
+.users-table-container .header p {
+    color: rgba(255, 255, 255, 0.9); /* Color blanco semi-transparente */
+    font-size: 1.1rem;  /* Tamaño de fuente */
+    position: relative;  /* Posicionamiento relativo */
+    z-index: 1;         /* Capa superior */
+}
+
+/* ===== CONTENEDOR DE LA TABLA ===== */
+.users-table-container .table-container {
+    padding: 0;         /* Sin padding interno */
+    overflow-x: auto;   /* Scroll horizontal si la tabla es muy ancha */
+}
+
+/* ===== TABLA PRINCIPAL ===== */
+.users-table-container .users-table {
+    width: 100%;        /* Ancho completo */
+    border-collapse: collapse; /* Elimina espacios entre celdas */
+    background: white;  /* Fondo blanco */
+}
+
+/* ===== CABECERA DE LA TABLA ===== */
+.users-table-container .users-table thead {
+    background: var(--gradiente-violeta); /* Usa el gradiente definido */
+}
+
+/* ===== CELDAS DE CABECERA ===== */
+.users-table-container .users-table th {
+    padding: 20px 15px; /* Espaciado interno */
+    text-align: left;   /* Alineación a la izquierda */
+    font-weight: 600;   /* Peso de fuente semi-bold */
+    color: white;       /* Color del texto */
+    font-size: 1rem;    /* Tamaño de fuente */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    letter-spacing: 1px; /* Espaciado entre letras */
+    position: relative;  /* Posicionamiento relativo */
+}
+
+/* ===== LÍNEA INFERIOR DE LAS CABECERAS ===== */
+.users-table-container .users-table th::after {
+    content: '';         /* Contenido vacío */
+    position: absolute;  /* Posicionamiento absoluto */
+    bottom: 0;          /* En la parte inferior */
+    left: 0;            /* Desde la izquierda */
+    width: 100%;        /* Ancho completo */
+    height: 2px;        /* Altura de 2px */
+    background: rgba(255, 255, 255, 0.3); /* Línea semi-transparente */
+}
+
+/* ===== FILAS DEL CUERPO DE LA TABLA ===== */
+.users-table-container .users-table tbody tr {
+    transition: all 0.3s ease; /* Transición suave de 0.3 segundos */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Línea inferior sutil */
+}
+
+/* ===== EFECTO HOVER EN LAS FILAS ===== */
+.users-table-container .users-table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); /* Fondo degradado al pasar el mouse */
+    transform: translateY(-2px); /* Se eleva 2px */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Sombra al elevarse */
+}
+
+/* ===== CELDAS DEL CUERPO DE LA TABLA ===== */
+.users-table-container .users-table td {
+    padding: 18px 15px; /* Espaciado interno */
+    font-size: 0.95rem; /* Tamaño de fuente */
+    color: #333;        /* Color del texto */
+    position: relative; /* Posicionamiento relativo */
+}
+
+/* ===== FILAS ALTERNADAS (ZEBRA STRIPING) ===== */
+.users-table-container .users-table tbody tr:nth-child(even) {
+    background: rgba(248, 250, 252, 0.5); /* Fondo alternado sutil */
+}
+
+/* ===== BADGES DE ESTADO ===== */
+.users-table-container .status-badge {
+    display: inline-block; /* Comportamiento de bloque en línea */
+    padding: 6px 12px;    /* Espaciado interno */
+    border-radius: 20px;  /* Bordes completamente redondeados */
+    font-size: 0.8rem;    /* Tamaño de fuente pequeño */
+    font-weight: 600;     /* Peso de fuente semi-bold */
+    text-transform: uppercase; /* Texto en mayúsculas */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* ===== BADGE DE ESTADO ACTIVO ===== */
+.users-table-container .status-active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Gradiente verde */
+    color: white;        /* Color del texto */
+}
+
+/* ===== BADGE DE ESTADO INACTIVO ===== */
+.users-table-container .status-inactive {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); /* Gradiente rojo */
+    color: white;        /* Color del texto */
+}
+
+/* ===== AVATAR DEL USUARIO ===== */
+.users-table-container .avatar {
+    width: 40px;         /* Ancho fijo */
+    height: 40px;        /* Alto fijo */
+    border-radius: 50%;  /* Forma circular */
+    background: var(--gradiente-violeta); /* Usa el gradiente definido */
+    color: white;        /* Color del texto */
+    display: flex;       /* Display flexbox */
+    align-items: center; /* Centra verticalmente */
+    justify-content: center; /* Centra horizontalmente */
+    font-weight: bold;   /* Peso de fuente bold */
+    font-size: 1.1rem;   /* Tamaño de fuente */
+    margin-right: 10px;  /* Margen derecho */
+}
+
+/* ===== CONTENEDOR DE INFORMACIÓN DEL USUARIO ===== */
+.users-table-container .user-info {
+    display: flex;       /* Display flexbox */
+    align-items: center; /* Centra verticalmente */
+}
+
+/* ===== DETALLES DEL USUARIO ===== */
+.users-table-container .user-details {
+    display: flex;       /* Display flexbox */
+    flex-direction: column; /* Dirección vertical */
+}
+
+/* ===== NOMBRE DEL USUARIO ===== */
+.users-table-container .user-name {
+    font-weight: 600;    /* Peso de fuente semi-bold */
+    color: #1f2937;      /* Color del texto */
+    margin-bottom: 2px;  /* Margen inferior pequeño */
+}
+
+/* ===== EMAIL DEL USUARIO ===== */
+.users-table-container .user-email {
+    font-size: 0.85rem;  /* Tamaño de fuente pequeño */
+    color: #6b7280;      /* Color gris */
+}
+
+/* ===== CONTENEDOR DE BOTONES DE ACCIÓN ===== */
+.users-table-container .action-buttons {
+    display: flex;       /* Display flexbox */
+    gap: 8px;           /* Espaciado entre botones */
+}
+
+/* ===== ESTILOS BASE DE LOS BOTONES ===== */
+.users-table-container .btn {
+    padding: 8px 16px;   /* Espaciado interno */
+    border: none;        /* Sin borde */
+    border-radius: 8px;  /* Bordes redondeados */
+    cursor: pointer;     /* Cursor de mano */
+    font-size: 0.85rem;  /* Tamaño de fuente */
+    font-weight: 500;    /* Peso de fuente */
+    transition: all 0.3s ease; /* Transición suave */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-flex; /* Display flexbox en línea */
+    align-items: center; /* Centra verticalmente */
+    gap: 5px;           /* Espaciado entre elementos internos */
+}
+
+.users-table-container .btn-edit {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.users-table-container .btn-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.users-table-container .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Estado de carga */
+.users-table-container .loading {
+    text-align: center;
+    padding: 40px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .users-table-container .table-container {
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .users-table-container .header h1 {
+        font-size: 2rem;
+    }
+    
+    .users-table-container .users-table {
+        font-size: 0.9rem;
+    }
+    
+    .users-table-container .users-table th,
+    .users-table-container .users-table td {
+        padding: 12px 8px;
+    }
+    
+    .users-table-container .action-buttons {
+        flex-direction: column;
+    }
+}
+
+

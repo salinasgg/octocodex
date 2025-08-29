@@ -1,0 +1,14 @@
+/* Archivo de prueba CSS */
+.users-table-container {
+    background: red !important;
+    border: 5px solid blue !important;
+}
+
+.users-table-container .header {
+    background: green !important;
+}
+
+.users-table-container .header h1 {
+    color: yellow !important;
+    font-size: 3rem !important;
+}

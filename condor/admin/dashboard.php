@@ -48,7 +48,7 @@ if (isset($_GET['logout'])) {
     <link rel="stylesheet" href="css/estilo_dashboard_admin.css">
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="css/enconstruccion.css">
-
+    <link rel="stylesheet" href="../css/style_editar_user.css">
 </head>
 <body>
 
@@ -117,7 +117,7 @@ if (isset($_GET['logout'])) {
                         <a class="nav-link active" href="#">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a>
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="#" id="usuarios-btn">
                             <i class="fas fa-users me-2"></i>Usuarios
                         </a>
                         <a class="nav-link" href="#">
@@ -134,7 +134,7 @@ if (isset($_GET['logout'])) {
             </div>
 
             <!-- Main Content -->
-            <div class="col-md-9 col-lg-10">
+            <div class="col-md-10 col-lg-10">
                 <div class="main-content">
                     <div class="container-fluid">
                         <div class="row construccion">
@@ -146,18 +146,18 @@ if (isset($_GET['logout'])) {
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <div class="user-avatar">
-                                    <?php echo strtoupper(substr($nombre_completo, 0, 1)); ?>
+                                    <?php //echo strtoupper(substr($nombre_completo, 0, 1)); ?>
                                 </div>
                             </div>
                             <div class="col">
-                                <h2 class="mb-1">¡BienvenidA, Administrador <?php echo htmlspecialchars($nombre_completo); ?>!</h2>
+                                <h2 class="mb-1">¡BienvenidA, Administrador <?php //echo htmlspecialchars($nombre_completo); ?>!</h2>
                                 <p class="text-muted mb-0">
                                     <i class="fas fa-clock me-1"></i>
-                                    Último acceso: <?php echo date('d/m/Y H:i', $login_time); ?>
+                                    Último acceso: <?php //echo date('d/m/Y H:i', $login_time); ?>
                                 </p>
                             </div>
                             <div class="col-auto">
-                                <span class="badge bg-primary fs-6"><?php echo ucfirst($rol === 'administrador' ? 'Administrador' : 'Usuario'); ?></span>
+                                <span class="badge bg-primary fs-6"><?php //<secho ucfirst($rol === 'administrador' ? 'Administrador' : 'Usuario'); ?></span>
                             </div>
                         </div>
                     </div> -->
@@ -298,15 +298,27 @@ if (isset($_GET['logout'])) {
         </div>
     </div>
 
-
+   <div>
+    <?php include '../php/modal_editar_usuario.php'; ?>
+   </div>
+    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../js/logout.js"></script>
     <script src="../js/perfil.js"></script>    
+    <script src="../js/showMessage.js"></script>
+    <script src="../js/funciones.js"></script>
     
+    
+
     <script>
+
+        funciones.mostrarModalUsuarios();
+        funciones.inicializarModalEvents(); // Inicializar eventos de la modal
+
+
         // Script para el dashboard
         console.log('Dashboard cargado correctamente');
         // Cargar el contenido de construccion.php en el div construccion

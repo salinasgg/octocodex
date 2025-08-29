@@ -15,4 +15,5 @@
     --error-color: #ef4444;          /* Color para mensajes de error (rojo) */
     --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);      /* Sombra estándar */
     --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Sombra grande */
+    --icon-color: #8b5cf6;  /* Color para los iconos */
 }
