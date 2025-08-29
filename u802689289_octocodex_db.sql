@@ -102,6 +102,13 @@ CREATE TABLE `usuarios` (
   `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Fecha de última actualización'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla de usuarios del sistema';
 
+
+--
+-- Agregar campo us_puesto a la tabla usuarios
+--
+ALTER TABLE `usuarios`
+  ADD COLUMN `us_puesto` varchar(100) DEFAULT NULL COMMENT 'Puesto o cargo del usuario' AFTER `us_rol`;
+
 --
 -- Volcado de datos para la tabla `usuarios`
 --

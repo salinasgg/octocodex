@@ -28,7 +28,7 @@ try {
         $fecha_nacimiento = $_POST['us_fecha_nacimiento'] ?? '';
         $rol = $_POST['us_rol'] ?? '';
         $activo = $_POST['us_activo'] ?? '1';
-        
+        $puesto = $_POST['us_puesto'] ?? '';
         // Validaciones básicas
         $errors = [];
         
@@ -100,8 +100,8 @@ try {
         
         // Preparar la consulta SQL para insertar el nuevo usuario
         $sql = "INSERT INTO usuarios (us_username, us_nombre, us_email, us_password, 
-                                    us_fecha_nacimiento, us_rol, us_activo, us_fecha_registro) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+                                    us_fecha_nacimiento, us_rol, us_activo, us_fecha_registro, us_puesto) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
         
         $stmt = $pdo->prepare($sql);
         
@@ -109,11 +109,12 @@ try {
         $result = $stmt->execute([
             $username,
             $nombre,
-            $email,
+            $email, 
             $password_hash,
             $fecha_nacimiento,
             $rol,
-            $activo
+            $activo,
+            $puesto
         ]);
         
         if ($result) {

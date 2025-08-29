@@ -33,7 +33,8 @@ $(document).ready(function() {
             us_password: $('#nuevo_us_password').val(),
             us_fecha_nacimiento: $('#nuevo_us_fecha_nacimiento').val(),
             us_rol: $('#nuevo_us_rol').val(),
-            us_activo: $('#nuevo_us_activo').val()
+            us_activo: $('#nuevo_us_activo').val(),
+            us_puesto: $('#nuevo_us_puesto').val()
         };
         
         // Validar campos requeridos
@@ -44,6 +45,12 @@ $(document).ready(function() {
             $('#nuevo-username-error').show();
             isValid = false;
         }
+
+        if (!formData.us_puesto) {
+            $('#nuevo-puesto-error').show();
+            isValid = false;
+        }
+
         if (!formData.us_nombre) {
             $('#nuevo-nombre-error').show();
             isValid = false;
@@ -87,8 +94,12 @@ $(document).ready(function() {
                         // Limpiar formulario
                         $('#nuevoUsuarioForm')[0].reset();
                         // Recargar la tabla de usuarios
+                        // Recargar la tabla de usuarios
                         if (typeof funciones !== 'undefined' && funciones.cargarUsuarios) {
-                            funciones.cargarUsuarios();
+                            funciones.cargarUsuarios(); // Actualizar tabla de usuarios
+                        } else {
+                            // Si no está disponible la función, recargar la página
+                            location.reload();
                         }
                     } else {
                         showMessage('❌ Error: ' + (result.message || 'Error al crear usuario'), 'error');
