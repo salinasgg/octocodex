@@ -20,7 +20,7 @@ body.modal-open {
     overflow: hidden;
 }
 
-/* Backdrop de Bootstrap - mostrar correctamente */
+/* Backdrop de Bootstrap - mostrar correctamente */ 
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -59,15 +59,15 @@ body.modal-open {
 
 .modal-dialog {
     z-index: 1055 !important;
-    max-height: 90vh;
-    margin: 1.75rem auto;
+    max-height: none; /* Sin límite de altura */
+    margin: 1rem auto; /* Margen reducido */
     position: relative;
 }
 
 .modal-content {
     z-index: 1060 !important;
-    max-height: 90vh;
-    overflow: hidden;
+    max-height: none; /* Sin límite de altura */
+    overflow: visible; /* Permitir que el contenido se expanda */
     position: relative;
     background: white;
     border-radius: 15px;
@@ -85,11 +85,11 @@ body.modal-open {
     border-bottom: none;
 }
 
-/* Body de la modal - con scroll */
+/* Body de la modal - sin límites de altura */
 .modal-body {
     padding: 2rem;
-    max-height: calc(90vh - 140px);
-    overflow-y: auto;
+    max-height: none; /* Sin límite de altura */
+    overflow-y: visible; /* Sin scroll interno */
     overflow-x: hidden;
 }
 
@@ -288,18 +288,159 @@ body:not(.modal-open) .modal-backdrop.show {
     background: rgba(52, 152, 219, 0.05);
 }
 
+/* Toggle switch para estado */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.toggle-switch {
+    width: 60px;
+    height: 30px;
+    background: #e5e7eb;
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-switch.active {
+    background: #10b981;
+}
+
+.toggle-slider {
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch.active .toggle-slider {
+    transform: translateX(30px);
+}
+
+.toggle-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Mensajes de error */
+.error-message {
+    color: #ef4444;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-height: none; /* Sin límite de altura en móviles */
+    }
+    
+    .modal-body {
+        max-height: none; /* Sin límite de altura */
+        padding: 1rem;
+        overflow-y: visible; /* Sin scroll interno */
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        padding: 1rem;
+    }
+    
     .edit-header {
         padding: 1.5rem;
     }
     
     .edit-content {
         padding: 1.5rem;
-   
     }
     
     .back-btn {
         top: 1rem;
         left: 1rem;
     }
+}
+
+/* Asegurar que la modal siempre se ajuste al contenido */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: auto;
+}
+
+.modal-content {
+    width: 100%;
+    margin: 0;
+}
+
+/* Eliminar estilos de scroll innecesarios */
+.modal-body::-webkit-scrollbar {
+    display: none; /* Ocultar scrollbar ya que no hay scroll */
+}
+
+.modal-body {
+    scrollbar-width: none; /* Para Firefox */
+    -ms-overflow-style: none; /* Para IE/Edge */
+}
+
+/* Estilos para modal adaptativa */
+.modal-dialog.modal-adaptive {
+    max-height: none;
+    margin: 1rem auto;
+}
+
+.modal-content.modal-adaptive {
+    max-height: none;
+}
+
+.modal-body.modal-adaptive {
+    max-height: none;
+    overflow-y: visible;
+}
+
+/* Animación suave para cambios de altura */
+.modal-body {
+    transition: max-height 0.3s ease, overflow-y 0.3s ease;
+}
+
+/* Asegurar que los formularios se vean bien */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }

@@ -80,9 +80,24 @@ function editUser(id) {
                 // Llenar el formulario con los datos del usuario
                 fillEditForm(response.data);
                 
-                // Mostrar la modal de Bootstrap de forma simple
-                var modal = new bootstrap.Modal(document.getElementById('myModaleditUser'));
+                // Mostrar la modal de Bootstrap
+                var modal = new bootstrap.Modal(document.getElementById('myModaleditUser'), {
+                    backdrop: 'static', // Evitar que se cierre al hacer clic fuera
+                    keyboard: false,    // Evitar que se cierre con ESC
+                    scrollable: false   // No permitir scroll interno, que se ajuste al contenido
+                });
                 modal.show();
+                
+                // Asegurar que el backdrop se muestre correctamente
+                setTimeout(function() {
+                    // Verificar que el backdrop esté visible
+                    if ($('.modal-backdrop').length === 0) {
+                        // Crear backdrop si no existe
+                        $('body').append('<div class="modal-backdrop fade show"></div>');
+                    }
+                    // Asegurar que el body tenga la clase modal-open
+                    $('body').addClass('modal-open');
+                }, 100);
                 
                 showMessage('Datos cargados correctamente', 'success', 2000);
             } else if (response.error) {
