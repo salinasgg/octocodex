@@ -15,63 +15,91 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Estado cuando el body tiene modal abierta */
+body.modal-open {
+    overflow: hidden;
+}
 
+/* Backdrop de Bootstrap - mostrar correctamente */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
 
-.edit-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+/* Backdrop cuando está activo */
+.modal-backdrop.show {
+    opacity: 1 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Transición suave para el backdrop */
+.modal-backdrop.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+
+.modal-backdrop.fade.show {
+    opacity: 1;
 }
 
 /* Modal de Bootstrap - asegurar que esté por encima del backdrop */
 .modal {
     z-index: 1050 !important;
+    display: none;
+}
+
+.modal.show {
+    display: block !important;
 }
 
 .modal-dialog {
     z-index: 1055 !important;
-    max-height: 90vh; /* Altura máxima del 90% de la pantalla */
-    margin: 1.75rem auto; /* Margen para centrar */
+    max-height: 90vh;
+    margin: 1.75rem auto;
+    position: relative;
 }
 
 .modal-content {
     z-index: 1060 !important;
-    max-height: 90vh; /* Altura máxima del 90% de la pantalla */
-    overflow: hidden; /* Ocultar overflow del contenedor principal */
-}
-
-/* Asegurar que la modal esté centrada y visible */
-.modal.show {
-    display: block !important;
-    background-color: rgba(0, 0, 0, 0.5);
+    max-height: 90vh;
+    overflow: hidden;
+    position: relative;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
 }
 
 /* Header de la modal - fijo */
 .modal-header {
-    background: var(--gradiente-violeta);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
     color: white;
-    border-radius: 0px 0px 0 0;
-    padding: 2rem;
+    border-radius: 15px 15px 0 0;
+    padding: 1.5rem;
     text-align: center;
-    flex-shrink: 0; /* Evitar que se comprima */
+    flex-shrink: 0;
+    border-bottom: none;
 }
 
 /* Body de la modal - con scroll */
 .modal-body {
     padding: 2rem;
-    max-height: calc(90vh - 140px); /* Altura máxima menos header y footer */
-    overflow-y: auto; /* Activar scroll vertical */
-    overflow-x: hidden; /* Ocultar scroll horizontal */
+    max-height: calc(90vh - 140px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* Footer de la modal - fijo */
 .modal-footer {
     padding: 1rem 2rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #e9ecef;
     background: #f8f9fa;
-    flex-shrink: 0; /* Evitar que se comprima */
+    flex-shrink: 0;
+    border-radius: 0 0 15px 15px;
 }
 
 /* Estilizar la barra de scroll del modal-body */
@@ -98,6 +126,17 @@ body {
 .modal-body {
     scrollbar-width: thin;
     scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Limpiar backdrop cuando se cierra la modal */
+body:not(.modal-open) .modal-backdrop {
+    display: none !important;
+}
+
+/* Forzar limpieza del backdrop */
+body:not(.modal-open) .modal-backdrop.show {
+    display: none !important;
+    opacity: 0 !important;
 }
 
 .edit-content {
