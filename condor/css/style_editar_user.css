@@ -25,13 +25,79 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Modal de Bootstrap - asegurar que esté por encima del backdrop */
+.modal {
+    z-index: 1050 !important;
+}
+
+.modal-dialog {
+    z-index: 1055 !important;
+    max-height: 90vh; /* Altura máxima del 90% de la pantalla */
+    margin: 1.75rem auto; /* Margen para centrar */
+}
+
+.modal-content {
+    z-index: 1060 !important;
+    max-height: 90vh; /* Altura máxima del 90% de la pantalla */
+    overflow: hidden; /* Ocultar overflow del contenedor principal */
+}
+
+/* Asegurar que la modal esté centrada y visible */
+.modal.show {
+    display: block !important;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Header de la modal - fijo */
 .modal-header {
     background: var(--gradiente-violeta);
-    /* background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); */
     color: white;
     border-radius: 0px 0px 0 0;
     padding: 2rem;
     text-align: center;
+    flex-shrink: 0; /* Evitar que se comprima */
+}
+
+/* Body de la modal - con scroll */
+.modal-body {
+    padding: 2rem;
+    max-height: calc(90vh - 140px); /* Altura máxima menos header y footer */
+    overflow-y: auto; /* Activar scroll vertical */
+    overflow-x: hidden; /* Ocultar scroll horizontal */
+}
+
+/* Footer de la modal - fijo */
+.modal-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid var(--border-color);
+    background: #f8f9fa;
+    flex-shrink: 0; /* Evitar que se comprima */
+}
+
+/* Estilizar la barra de scroll del modal-body */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Para Firefox */
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
 .edit-content {

@@ -81,7 +81,11 @@ function editUser(id) {
                 fillEditForm(response.data);
                 
                 // Mostrar la modal de Bootstrap
-                var modal = new bootstrap.Modal(document.getElementById('myModaleditUser'));
+                var modal = new bootstrap.Modal(document.getElementById('myModaleditUser'), {
+                    backdrop: 'static', // Evitar que se cierre al hacer clic fuera
+                    keyboard: false,    // Evitar que se cierre con ESC
+                    scrollable: true    // Permitir scroll dentro de la modal
+                });
                 modal.show();
                 
                 // Asegurar que el backdrop se muestre correctamente
@@ -93,6 +97,9 @@ function editUser(id) {
                     }
                     // Asegurar que el body tenga la clase modal-open
                     $('body').addClass('modal-open');
+                    
+                    // Scroll al inicio del contenido de la modal
+                    $('#myModaleditUser .modal-body').scrollTop(0);
                 }, 100);
                 
                 showMessage('Datos cargados correctamente', 'success', 2000);
