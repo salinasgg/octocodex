@@ -66,7 +66,7 @@ function editUser(id) {
     console.log('🔍 ID del usuario a editar:', id);
     
     // Mostrar mensaje de carga
-    // showMessage('Cargando datos del usuario...', 'info', 2000);
+    //  showMessage('Cargando datos del usuario...', 'info', 2000);
     
     $.ajax({
         url: '../php/usuarios_info.php',
@@ -278,14 +278,16 @@ function populateTable(usuarios) {
     
     // Crear el HTML completo de la tabla con contenedor específico
     let tableHTML = `
+    <a href="#" id="nuevoUsuarioBtn" class="btn btn-primary"><img src="../icons/16x/agregar-usuario16.png" alt="Usuarios" style="vertical-align: middle; margin-right: 10px;"> Nuevo Usuario</a>
         <div class="users-table-container">
             <div class="container">
                 <div class="header">
                     <h1><img src="../icons/usuarios-white.png" alt="Usuarios" style="vertical-align: middle; margin-right: 10px;"> Gestión de Usuarios</h1>
                     <p>Administra y visualiza todos los usuarios del sistema</p>
                 </div>
-
+                
                 <div class="table-container">
+                
                     <table class="users-table" id="usersTable">
                         <thead>
                             <tr>

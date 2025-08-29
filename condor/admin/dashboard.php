@@ -300,6 +300,7 @@ if (isset($_GET['logout'])) {
 
    <div>
     <?php include '../php/modal_editar_usuario.php'; ?>
+    <?php include '../php/modal_nuevo_usuario.php'; ?>
    </div>
     
     <!-- jQuery -->
@@ -310,6 +311,8 @@ if (isset($_GET['logout'])) {
     <script src="../js/perfil.js"></script>    
     <script src="../js/showMessage.js"></script>
     <script src="../js/funciones.js"></script>
+    <script src="../js/nuevo_usuario.js"></script>
+
     
     
 
