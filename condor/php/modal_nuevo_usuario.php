@@ -92,7 +92,7 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label" for="us_puesto">
-                                <img src="../icons/16x/trabajo.png" alt="Puesto" style="vertical-align: middle; margin-right: 10px; width: 16px; height: 16px;"> 
+                                <img src="../icons/16x/maletin16.png" alt="Puesto" style="vertical-align: middle; margin-right: 10px; width: 16px; height: 16px;"> 
                                 Puesto de Trabajo
                             </label>
                             <input type="text" id="us_puesto" name="us_puesto" class="form-control" 

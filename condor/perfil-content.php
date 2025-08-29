@@ -18,7 +18,7 @@ try {
     
     $stmt = $pdo->prepare("
         SELECT id, us_username, us_email, us_rol, us_nombre, us_apellido, 
-               us_bio, us_foto_perfil, us_url_perfil, us_fecha_ultimo_acceso,
+               us_bio, us_foto_perfil, us_url_perfil, us_puesto, us_fecha_ultimo_acceso,
                us_ultimo_ip, us_activo, us_fecha_registro, fecha_actualizacion
         FROM usuarios 
         WHERE id = :id
@@ -43,7 +43,13 @@ try {
 
 
 <div class="profile-container">
-    <div class="profile-header"></div>
+    <div class="profile-header" style="text-align: center; color: white; font-size: 40px; font-weight: bold; margin: 0 auto;">
+        <div class="row ">
+            <div class="col-md-12 d-flex justify-content-center align-items-center" style="min-height: 120px; ">
+                <p class="m-0"><?php echo $userData['us_puesto'] ?? ''; ?></p>
+            </div>
+        </div>
+    </div>
     
     <div class="profile-content">
         <div class="profile-image-section">
