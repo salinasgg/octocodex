@@ -117,10 +117,10 @@
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            ❌ Cancelar
+        <img src="../icons/16x/cancel16.png" alt="cancel" style="vertical-align: middle; margin-right: 10px; width: 16px; height: 16px;"> Cancelar
         </button>
         <button type="button" class="btn btn-primary" onclick="saveUser()" id="saveBtn">
-            💾 Guardar Cambios
+        <img src="../icons/16x/guardar16.png" alt="save" style="vertical-align: middle; margin-right: 10px; width: 16px; height: 16px;"> Guardar Cambios
         </button>
       </div>
 
