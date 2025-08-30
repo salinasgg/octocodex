@@ -285,7 +285,7 @@ function populateTable(usuarios) {
             <div class="container">
             
                 <div class="header">                
-                    <h1><img src="../icons/usuarios-white.png" alt="Usuarios" style="vertical-align: middle; margin-right: 10px;"> Gestión de Usuarios</h1>
+                    <h1><img src="../icons/usuarios-white.png" alt="Usuarios" style="vertical-align: middle; margin-right: 10px;"> Gestións de Usuarios</h1>
                     <p>Administra y visualiza todos los usuarios del sistema</p>                    
                 </div>
                 
