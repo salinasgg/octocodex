@@ -85,22 +85,22 @@
                 </form>
 
                 <!-- Separador -->
-                <div class="divider">
+                <!-- <div class="divider">
                     <span>o continúa con</span>
-                </div>
+                </div> -->
 
                 <!-- Botones sociales -->
-                <div class="social-buttons">
+                <!-- <div class="social-buttons">
                     <a href="#" class="btn-social">
                         <i class="fab fa-google me-2"></i>Google
                     </a>
                     <a href="#" class="btn-social">
                         <i class="fab fa-facebook me-2"></i>Facebook
                     </a>
-                </div>
+                </div> -->
 
                 <!-- Enlaces adicionales -->
-                <div class="form-links">
+                <!-- <div class="form-links">
                     <p>
                         ¿No tienes cuenta? 
                         <a href="#" id="registerLink">Regístrate aquí</a>
@@ -108,7 +108,7 @@
                     <p>
                         <a href="#" id="forgotPasswordLink">¿Olvidaste tu contraseña?</a>
                     </p>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
