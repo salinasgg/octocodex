@@ -279,7 +279,7 @@ function populateTable(usuarios) {
     // Crear el HTML completo de la tabla con contenedor específico
     let tableHTML = `
         <div class="new-user-button-container">
-            <button id="newUserBtn" class="btn btn-primary" onclick="showNewUserModal()">
+            <button id="nuevoUsuarioBtn" class="btn btn-primary" ">
                 <img src="../icons/16x/agregar-usuario16.png" alt="Nuevo" id="nuevoUsuarioBtn" style="vertical-align: middle; margin-right: 5px;">
                 Nuevo Usuario
             </button>

@@ -97,6 +97,9 @@
                             </label>
                             <input type="text" id="us_puesto" name="us_puesto" class="form-control" 
                                 placeholder="Ingrese el puesto de trabajo">
+                            <div class="error-message" id="nuevo-puesto-error" style="display: none;">
+                                ⚠️ El puesto de trabajo es requerido
+                            </div>
                         </div>
                     </div>
 

@@ -29,7 +29,7 @@ try {
         $rol = $_POST['us_rol'] ?? '';
         $activo = $_POST['us_activo'] ?? '1';
         $puesto = $_POST['us_puesto'] ?? '';
-        // Validaciones básicas
+        // Validaciones básicass
         $errors = [];
         
         if (empty($username)) {

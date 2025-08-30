@@ -62,6 +62,10 @@ $(document).ready(function() {
             $('#nuevo-nombre-error').show();
             isValid = false;
         }
+        if (!formData.us_puesto) {
+            $('#nuevo-puesto-error').show();
+            isValid = false;
+        }
         if (!formData.us_email) {
             $('#nuevo-email-error').show();
             isValid = false;
