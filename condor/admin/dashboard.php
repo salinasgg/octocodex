@@ -137,15 +137,7 @@ if (isset($_GET['logout'])) {
             <div class="col-md-10 col-lg-10">
                 <div class="main-content">
                                          <div class="container-fluid">
-                         <!-- Botón Nuevo Usuario siempre visible -->
-                         <div class="row mb-3">
-                             <div class="col-12">
-                                 <button type="button" id="nuevoUsuarioBtn" class="btn btn-primary">
-                                     <img src="../icons/16x/agregar-usuario16.png" alt="Usuarios" style="vertical-align: middle; margin-right: 10px;"> 
-                                     Nuevo Usuario
-                                 </button>
-                             </div>
-                         </div>
+      
                          
                          <div class="row construccion">
                              
