@@ -57,6 +57,33 @@ var funciones = {
                 $('body').css('padding-right', '');
             }, 150);
         });
+    },
+
+    // Función para recargar la tabla de usuarios
+    recargarTablaUsuarios: function() {
+        console.log('🔄 Recargando tabla de usuarios...');
+        
+        $.ajax({
+            url: '../php/usuarios.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                // Aplicar estilos CSS antes de mostrar la tabla
+                funciones.aplicarEstilosTabla();
+                
+                // Solo actualizar la tabla si estamos en la vista de usuarios
+                if ($('.users-table-container').length > 0) {
+                    $('.main-content').html(populateTable(response));
+                    console.log('✅ Tabla de usuarios actualizada');
+                } else {
+                    console.log('ℹ️ No estamos en la vista de usuarios, no se actualiza la tabla');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('❌ Error al recargar tabla de usuarios:', error);
+                showMessage('Error al actualizar la tabla de usuarios', 'error', 3000);
+            }
+        });
     }
 };
 

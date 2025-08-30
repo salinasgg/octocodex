@@ -62,10 +62,7 @@ $(document).ready(function() {
             $('#nuevo-nombre-error').show();
             isValid = false;
         }
-        if (!formData.us_puesto) {
-            $('#nuevo-puesto-error').show();
-            isValid = false;
-        }
+        // El campo puesto es opcional, no necesita validación
         if (!formData.us_email) {
             $('#nuevo-email-error').show();
             isValid = false;
@@ -101,16 +98,19 @@ $(document).ready(function() {
                     // const result = JSON.parse(response);
                     if (response.success) {
                         // Mostrar mensaje de éxito
-                        showMessage('✅ Usuario creado exitosamente', 'success');
+                        showMessage('Usuario creado exitosamente', 'success');
                         // Cerrar modal
                         $('#myModalNuevoUsuario').modal('hide');
                         // Limpiar formulario
                         $('#nuevoUsuarioForm')[0].reset();
+                        
+                        console.log('🔄 Iniciando recarga de tabla...');
                         // Recargar la tabla de usuarios
-                        // Recargar la tabla de usuarios
-                        if (typeof funciones !== 'undefined' && funciones.cargarUsuarios) {
-                            funciones.cargarUsuarios(); // Actualizar tabla de usuarios
+                        if (typeof funciones !== 'undefined' && funciones.recargarTablaUsuarios) {
+                            console.log('✅ Función recargarTablaUsuarios encontrada');
+                            funciones.recargarTablaUsuarios(); // Actualizar tabla de usuarios
                         } else {
+                            console.log('❌ Función recargarTablaUsuarios no encontrada, recargando página');
                             // Si no está disponible la función, recargar la página
                             location.reload();
                         }

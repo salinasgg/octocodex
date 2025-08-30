@@ -46,16 +46,17 @@ function showConfirm(message, callback) {
     modalDiv.className = 'show-confirm-overlay';
     modalDiv.innerHTML = `
         <div class="show-confirm-modal">
-            <div class="show-confirm-header">
-                <i class="fas fa-question-circle"></i>
+            <div class="show-confirm-header" style="background: var(--gradiente-violeta); color: white;">
+                <img src="../icons/16x/interrogatorio.png" alt="Confirmar" style="vertical-align: middle; margin-right: 10px;">
                 <span>Confirmar Acción</span>
             </div>
             <div class="show-confirm-body">
                 ${message}
             </div>
+            <div class="show-confirm-divider" style="height: 1px; background: var(--gradiente-violeta); margin: 15px 0;"></div>
             <div class="show-confirm-footer">
-                <button class="btn btn-secondary" id="show-confirm-cancel">Cancelar</button>
-                <button class="btn btn-danger" id="show-confirm-ok">Confirmar</button>
+                <button class="btn btn-primary" id="show-confirm-cancel">Cancelar</button>
+                <button class="btn btn-secondary" id="show-confirm-ok">Confirmar</button>
             </div>
         </div>
     `;
