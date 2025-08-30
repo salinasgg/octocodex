@@ -1,13 +1,20 @@
 $(document).ready(function() {
+    console.log('🔧 nuevo_usuario.js cargado correctamente');
 
     // Usar delegación de eventos para el botón que se crea dinámicamente
     $(document).on('click', '#nuevoUsuarioBtn', function(e) {
         e.preventDefault();
+        console.log('🖱️ Botón nuevo usuario clickeado');
+        console.log('📋 Modal ID:', '#myModalNuevoUsuario');
+        console.log('🔍 Modal existe:', $('#myModalNuevoUsuario').length > 0);
+        
         $('#myModalNuevoUsuario').modal('show');
+        console.log('✅ Modal de nuevo usuario abierto');
     });
 
     // Función para alternar el estado del usuario en el modal de nuevo usuario
     window.toggleNuevoUserStatus = function() {
+        console.log('🔄 Alternando estado del nuevo usuario');
         const toggle = document.getElementById('toggleNuevoActive');
         const label = document.getElementById('nuevoStatusLabel');
         const input = document.getElementById('nuevo_us_activo');
@@ -16,15 +23,19 @@ $(document).ready(function() {
             toggle.classList.remove('active');
             label.textContent = 'Inactivo';
             input.value = '0';
+            console.log('❌ Usuario marcado como inactivo');
         } else {
             toggle.classList.add('active');
             label.textContent = 'Activo';
             input.value = '1';
+            console.log('✅ Usuario marcado como activo');
         }
     };
 
     // Función para guardar el nuevo usuario
     window.saveNuevoUsuario = function() {
+        console.log('💾 Guardando nuevo usuario...');
+        
         // Obtener los datos del formulario
         const formData = {
             us_username: $('#nuevo_us_username').val(),
@@ -34,8 +45,10 @@ $(document).ready(function() {
             us_fecha_nacimiento: $('#nuevo_us_fecha_nacimiento').val(),
             us_rol: $('#nuevo_us_rol').val(),
             us_activo: $('#nuevo_us_activo').val(),
-            us_puesto: $('#nuevo_us_puesto').val()
+            us_puesto: $('#us_puesto').val()
         };
+        
+        console.log('📊 Datos del formulario:', formData);
         
         // Validar campos requeridos
         let isValid = true;
@@ -45,12 +58,6 @@ $(document).ready(function() {
             $('#nuevo-username-error').show();
             isValid = false;
         }
-
-        if (!formData.us_puesto) {
-            $('#nuevo-puesto-error').show();
-            isValid = false;
-        }
-
         if (!formData.us_nombre) {
             $('#nuevo-nombre-error').show();
             isValid = false;
@@ -73,6 +80,7 @@ $(document).ready(function() {
         }
         
         if (!isValid) {
+            console.log('❌ Validación fallida');
             return;
         }
         
@@ -83,6 +91,7 @@ $(document).ready(function() {
             data: formData,
             dataType: 'json',
             success: function(response) {
+                console.log('📡 Respuesta del servidor:', response);
                 try {
                     console.log(response);
                     // const result = JSON.parse(response);
@@ -102,13 +111,17 @@ $(document).ready(function() {
                             location.reload();
                         }
                     } else {
-                        showMessage('❌ Error: ' + (result.message || 'Error al crear usuario'), 'error');
+                        showMessage('❌ Error: ' + (response.message || 'Error al crear usuario'), 'error');
                     }
                 } catch (e) {
+                    console.error('❌ Error al parsear respuesta:', e);
                     showMessage('❌ Error inesperado al crear usuario', 'error');
                 }
             },
             error: function(xhr, status, error) {
+                console.error('❌ Error en la petición AJAX:', error);
+                console.error('❌ Status:', status);
+                console.error('❌ Response:', xhr.responseText);
                 showMessage('❌ Error de conexión al crear usuario', 'error');
             }
         });
@@ -116,6 +129,7 @@ $(document).ready(function() {
 
     // Limpiar formulario cuando se cierre el modal
     $('#myModalNuevoUsuario').on('hidden.bs.modal', function() {
+        console.log('🔒 Modal cerrado, limpiando formulario');
         $('#nuevoUsuarioForm')[0].reset();
         $('.error-message').hide();
         // Resetear el toggle a activo
@@ -124,12 +138,32 @@ $(document).ready(function() {
         $('#nuevo_us_activo').val('1');
     });
 
+    // Verificar que el modal existe cuando se carga la página
+    console.log('🔍 Verificando modal:', $('#myModalNuevoUsuario').length > 0 ? '✅ Existe' : '❌ No existe');
+    console.log('🔍 Verificando botón:', $('#nuevoUsuarioBtn').length > 0 ? '✅ Existe' : '❌ No existe (se crea dinámicamente)');
+
     // Inicializar el toggle switch cuando se abre el modal
     $('#myModalNuevoUsuario').on('shown.bs.modal', function() {
+        console.log('🎯 Modal abierto, inicializando toggle...');
         // Asegurar que el toggle esté en estado activo por defecto
         $('#toggleNuevoActive').addClass('active');
         $('#nuevoStatusLabel').text('Activo');
         $('#nuevo_us_activo').val('1');
     });
+
+    // Ejecutar prueba automática después de 2 segundos
+    setTimeout(function() {
+        console.log('🧪 Ejecutando prueba automática...');
+        if ($('#myModalNuevoUsuario').length > 0) {
+            console.log('✅ Modal encontrado en el DOM');
+        } else {
+            console.log('❌ Modal NO encontrado en el DOM');
+        }
+        if ($('#nuevoUsuarioBtn').length > 0) {
+            console.log('✅ Botón encontrado en el DOM');
+        } else {
+            console.log('❌ Botón NO encontrado en el DOM');
+        }
+    }, 2000);
 
 });
