@@ -277,13 +277,10 @@ function populateTable(usuarios) {
     console.log('📋 Es array?', Array.isArray(usuarios));
     
     // Crear el HTML completo de la tabla con contenedor específico
-    let tableHTML = `
-        <div class="new-user-button-container">
-            <button id="nuevoUsuarioBtn" class="btn btn-primary" ">
+    let tableHTML = `<button id="nuevoUsuarioBtn" class="btn btn-primary">
                 <img src="../icons/16x/agregar-usuario16.png" alt="Nuevo" id="nuevoUsuarioBtn" style="vertical-align: middle; margin-right: 5px;">
                 Nuevo Usuario
             </button>
-        </div>
         <div class="users-table-container">
             <div class="container">
             
