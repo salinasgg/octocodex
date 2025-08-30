@@ -5,6 +5,11 @@
  * Verifica la sesión del usuario y muestra el contenido correspondiente
  */
 
+// Headers para evitar caché
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 // Iniciar sesión
 session_start();
 
@@ -36,6 +41,9 @@ if (isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Dashboard - Condor</title>
     
     <!-- Bootstrap 5 CSS -->
@@ -45,10 +53,10 @@ if (isset($_GET['logout'])) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Estilos -->
-    <link rel="stylesheet" href="css/estilo_dashboard_admin.css">
-    <link rel="stylesheet" href="../css/variables.css">
-    <link rel="stylesheet" href="css/enconstruccion.css">
-    <link rel="stylesheet" href="../css/style_editar_user.css">
+    <link rel="stylesheet" href="css/estilo_dashboard_admin.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../css/variables.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="css/enconstruccion.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../css/style_editar_user.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
@@ -309,11 +317,11 @@ if (isset($_GET['logout'])) {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/logout.js"></script>
-    <script src="../js/perfil.js"></script>    
-    <script src="../js/showMessage.js"></script>
-    <script src="../js/funciones.js"></script>
-    <script src="../js/nuevo_usuario.js"></script>
+    <script src="../js/logout.js?v=<?php echo time(); ?>"></script>
+    <script src="../js/perfil.js?v=<?php echo time(); ?>"></script>    
+    <script src="../js/showMessage.js?v=<?php echo time(); ?>"></script>
+    <script src="../js/funciones.js?v=<?php echo time(); ?>"></script>
+    <script src="../js/nuevo_usuario.js?v=<?php echo time(); ?>"></script>
 
     
     
