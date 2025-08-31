@@ -17,3 +17,431 @@
     --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Sombra grande */
     --icon-color: #8b5cf6;  /* Color para los iconos */
 }
+
+/* ===== ESTILOS PARA LA VISTA DE DETALLES DEL CLIENTE ===== */
+
+/* Contenedor principal de información del cliente */
+.client-info-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* Perfil del cliente */
+.client-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Header del cliente */
+.client-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 12px;
+    color: white;
+}
+
+/* Avatar del cliente */
+.client-avatar {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Información principal del cliente */
+.client-main-info {
+    flex: 1;
+}
+
+.client-name {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
+.client-id {
+    font-size: 14px;
+    opacity: 0.8;
+    margin: 0 0 8px 0;
+}
+
+.client-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Secciones de información */
+.info-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: var(--text-dark);
+}
+
+/* Grid de información */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+/* Elementos de información */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+/* Contenedor de tags */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--primary-color);
+    color: white;
+}
+
+.tag.priority-high {
+    background: #10b981;
+}
+
+.tag.priority-low {
+    background: #ef4444;
+}
+
+/* Botón para volver */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+/* Responsive design para la vista del cliente */
+@media (max-width: 768px) {
+    .client-info-container {
+        padding: 16px;
+        margin: 10px;
+    }
+    
+    .client-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .client-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+    
+    .client-name {
+        font-size: 24px;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-title {
+        font-size: 16px;
+    }
+}
+
+/* ===== ESTILOS PARA EL BUSCADOR ===== */
+
+/* Contenedor principal del buscador */
+.search-container {
+    margin: 20px 0;                   /* Espacio vertical alrededor del buscador */
+    padding: 20px;                    /* Espacio interno */
+    background: white;                 /* Fondo blanco */
+    border-radius: 8px;               /* Bordes redondeados */
+    box-shadow: var(--shadow);        /* Sombra sutil */
+}
+
+/* Contenedor del campo de búsqueda y botón */
+.search-box {
+    display: flex;                    /* Usar flexbox para alinear elementos */
+    align-items: center;              /* Centrar verticalmente */
+    gap: 10px;                        /* Espacio entre el input y el botón */
+    margin-bottom: 10px;              /* Espacio inferior */
+}
+
+/* Campo de entrada de búsqueda */
+.search-input {
+    flex: 1;                          /* Ocupar todo el espacio disponible */
+    padding: 12px 16px;               /* Espacio interno */
+    border: 2px solid var(--border-color); /* Borde sutil */
+    border-radius: 8px;               /* Bordes redondeados */
+    font-size: 14px;                  /* Tamaño de fuente */
+    font-family: inherit;             /* Heredar fuente del padre */
+    transition: all 0.3s ease;        /* Transición suave */
+    background: white;                /* Fondo blanco */
+    color: var(--text-dark);          /* Color de texto */
+}
+
+/* Efecto focus en el campo de búsqueda */
+.search-input:focus {
+    outline: none;                    /* Remover outline por defecto */
+    border-color: var(--primary-color); /* Cambiar color del borde al primario */
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1); /* Sombra de focus */
+    transform: translateY(-1px);      /* Levantar ligeramente */
+}
+
+/* Placeholder del campo de búsqueda */
+.search-input::placeholder {
+    color: var(--text-light);         /* Color de texto secundario */
+    font-style: italic;               /* Estilo itálico */
+}
+
+/* Botón de búsqueda */
+.search-btn {
+    padding: 12px 16px;               /* Espacio interno */
+    background: var(--primary-color); /* Fondo del color primario */
+    color: white;                     /* Texto blanco */
+    border: none;                     /* Sin borde */
+    border-radius: 8px;               /* Bordes redondeados */
+    cursor: pointer;                  /* Cursor de mano */
+    font-size: 14px;                  /* Tamaño de fuente */
+    font-weight: 500;                 /* Peso de fuente medio */
+    transition: all 0.3s ease;        /* Transición suave */
+    display: flex;                    /* Usar flexbox para centrar el icono */
+    align-items: center;              /* Centrar verticalmente */
+    justify-content: center;          /* Centrar horizontalmente */
+    min-width: 50px;                  /* Ancho mínimo */
+}
+
+/* Efecto hover en el botón de búsqueda */
+.search-btn:hover {
+    background: var(--primary-dark);  /* Fondo más oscuro */
+    transform: translateY(-1px);      /* Levantar ligeramente */
+    box-shadow: var(--shadow);        /* Agregar sombra */
+}
+
+/* Efecto active en el botón de búsqueda */
+.search-btn:active {
+    transform: translateY(0);         /* Volver a posición normal */
+    box-shadow: none;                 /* Remover sombra */
+}
+
+/* Icono de búsqueda */
+.search-btn i {
+    font-size: 16px;                  /* Tamaño del icono */
+}
+
+/* Información de resultados de búsqueda */
+.search-info {
+    display: flex;                    /* Usar flexbox */
+    justify-content: space-between;   /* Distribuir elementos */
+    align-items: center;              /* Centrar verticalmente */
+    padding: 10px 0;                  /* Espacio vertical */
+    border-top: 1px solid var(--border-color); /* Línea separadora */
+}
+
+/* Texto de resultados */
+#resultadosBusqueda {
+    color: var(--text-light);         /* Color de texto secundario */
+    font-size: 14px;                  /* Tamaño de fuente */
+    font-weight: 500;                 /* Peso de fuente medio */
+}
+
+/* Indicador de búsqueda activa */
+.search-active {
+    background: linear-gradient(90deg, var(--primary-light), var(--primary-color)); /* Gradiente */
+    color: white;                     /* Texto blanco */
+    animation: pulse 2s infinite;     /* Animación de pulso */
+}
+
+/* Animación de pulso para indicar búsqueda activa */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* ===== ESTILOS PARA LA PAGINACIÓN ===== */
+
+/* Contenedor principal de la paginación */
+.pagination-container {
+    margin-top: 20px;                    /* Espacio superior para separar de la tabla */
+    padding: 20px;                       /* Espacio interno alrededor del contenido */
+    background: white;                   /* Fondo blanco para destacar del fondo gris */
+    border-radius: 8px;                  /* Bordes redondeados para un look moderno */
+    box-shadow: var(--shadow);           /* Sombra sutil para dar profundidad */
+    display: flex;                       /* Usar flexbox para alinear elementos */
+    justify-content: space-between;      /* Distribuir elementos: info a la izquierda, controles a la derecha */
+    align-items: center;                 /* Centrar verticalmente los elementos */
+    flex-wrap: wrap;                     /* Permitir que los elementos se envuelvan en pantallas pequeñas */
+    gap: 15px;                          /* Espacio entre elementos flex */
+}
+
+/* Información de paginación (ej: "Mostrando 1-10 de 50 registros") */
+.pagination-info {
+    color: var(--text-light);           /* Color de texto secundario */
+    font-size: 14px;                    /* Tamaño de fuente pequeño */
+    font-weight: 500;                   /* Peso de fuente medio */
+}
+
+/* Contenedor de los botones de paginación */
+.pagination-controls {
+    display: flex;                       /* Usar flexbox para alinear botones horizontalmente */
+    align-items: center;                 /* Centrar verticalmente los botones */
+    gap: 8px;                           /* Espacio entre botones */
+    flex-wrap: wrap;                     /* Permitir que los botones se envuelvan */
+}
+
+/* Estilo base para todos los botones de página */
+.btn-pagina {
+    padding: 8px 12px;                  /* Espacio interno del botón */
+    border: 1px solid var(--border-color); /* Borde sutil */
+    background: white;                   /* Fondo blanco */
+    color: var(--text-dark);            /* Color de texto principal */
+    border-radius: 6px;                  /* Bordes redondeados */
+    cursor: pointer;                     /* Cursor de mano al pasar el mouse */
+    font-size: 14px;                    /* Tamaño de fuente */
+    font-weight: 500;                   /* Peso de fuente medio */
+    transition: all 0.2s ease;          /* Transición suave para efectos hover */
+    min-width: 40px;                    /* Ancho mínimo para botones de números */
+    text-align: center;                 /* Centrar texto en el botón */
+}
+
+/* Efecto hover para botones de página */
+.btn-pagina:hover {
+    background: var(--secondary-color);  /* Cambiar fondo al color secundario */
+    border-color: var(--primary-color);  /* Cambiar color del borde al primario */
+    color: var(--primary-color);         /* Cambiar color del texto al primario */
+    transform: translateY(-1px);         /* Levantar ligeramente el botón */
+    box-shadow: var(--shadow);           /* Agregar sombra al hacer hover */
+}
+
+/* Estilo para el botón de la página activa (página actual) */
+.btn-pagina-activa {
+    background: var(--primary-color);    /* Fondo del color primario */
+    color: white;                        /* Texto blanco */
+    border-color: var(--primary-color);  /* Borde del mismo color */
+    box-shadow: var(--shadow);           /* Sombra para destacar */
+}
+
+/* Efecto hover para el botón activo */
+.btn-pagina-activa:hover {
+    background: var(--primary-dark);     /* Fondo más oscuro al hacer hover */
+    transform: translateY(-1px);         /* Levantar ligeramente el botón */
+}
+
+/* Estilo para los puntos suspensivos (...) */
+.pagination-ellipsis {
+    color: var(--text-light);           /* Color de texto secundario */
+    font-weight: 500;                   /* Peso de fuente medio */
+    padding: 0 8px;                     /* Espacio horizontal */
+}
+
+/* ===== DISEÑO RESPONSIVE ===== */
+/* Aplicar estos estilos cuando la pantalla sea menor a 768px (tablets y móviles) */
+@media (max-width: 768px) {
+    /* ===== RESPONSIVE PARA BUSCADOR ===== */
+    .search-container {
+        padding: 15px;                  /* Menos padding en móviles */
+    }
+    
+    .search-box {
+        flex-direction: column;         /* Apilar elementos verticalmente */
+        gap: 10px;                      /* Espacio entre elementos */
+    }
+    
+    .search-input {
+        width: 100%;                    /* Ancho completo */
+        font-size: 16px;                /* Texto más grande para móviles */
+    }
+    
+    .search-btn {
+        width: 100%;                    /* Ancho completo */
+        padding: 14px;                  /* Más padding para facilitar el toque */
+        font-size: 16px;                /* Texto más grande */
+    }
+    
+    .search-info {
+        flex-direction: column;         /* Apilar elementos verticalmente */
+        gap: 5px;                       /* Espacio entre elementos */
+        text-align: center;             /* Centrar texto */
+    }
+    
+    /* ===== RESPONSIVE PARA PAGINACIÓN ===== */
+    /* Cambiar la dirección del flexbox a columna en pantallas pequeñas */
+    .pagination-container {
+        flex-direction: column;          /* Apilar elementos verticalmente */
+        align-items: stretch;            /* Estirar elementos al ancho completo */
+        text-align: center;              /* Centrar texto */
+    }
+    
+    /* Centrar los controles de paginación */
+    .pagination-controls {
+        justify-content: center;         /* Centrar botones horizontalmente */
+    }
+    
+    /* Hacer botones más grandes en móviles para facilitar el toque */
+    .btn-pagina {
+        padding: 10px 14px;              /* Más padding para botones más grandes */
+        font-size: 16px;                 /* Texto más grande */
+    }
+}

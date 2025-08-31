@@ -119,6 +119,10 @@ if (!document.getElementById('show-message-styles')) {
             max-width: 400px;
             word-wrap: break-word;
         }
+
+        .propuesta{
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
         
         .show-message.show {
             transform: translateX(0);

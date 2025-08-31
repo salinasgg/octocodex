@@ -4,6 +4,8 @@
     --gradiente-violeta: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
 }
 
+
+
 /* ===== RESET CSS ESPECÍFICO PARA LA TABLA DE USUARIOS ===== */
 .users-table-container * {
     margin: 0;          /* Elimina márgenes por defecto */
@@ -25,7 +27,7 @@
     width: 100%;         /* Usa todo el ancho disponible */
     margin: 0 auto;      /* Centra el contenedor horizontalmente */
     background: rgba(255, 255, 255, 0.95); /* Fondo blanco semi-transparente */
-    border-radius: 20px; /* Bordes redondeados */
+    border-radius: 0px; /* Bordes redondeados */
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); /* Sombra suave */
     backdrop-filter: blur(10px); /* Efecto de desenfoque del fondo */
     overflow: hidden;    /* Oculta contenido que se salga del contenedor */
@@ -227,6 +229,22 @@
     gap: 5px;           /* Espaciado entre elementos internos */
 }
 
+.users-table-container .btn-agregar {
+    padding: 8px 16px;   /* Espaciado interno */
+    background: var(--gradiente-violeta);
+    color: white;
+    border: 1px solid #000000;
+    border: none;        /* Sin borde */
+    border-radius: 8px;  /* Bordes redondeados */
+    cursor: pointer;     /* Cursor de mano */
+    font-size: 0.85rem;  /* Tamaño de fuente */
+    font-weight: 500;    /* Peso de fuente */
+    transition: all 0.3s ease; /* Transición suave */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-flex; /* Display flexbox en línea */
+    align-items: center; /* Centra verticalmente */
+    gap: 5px;           /* Espaciado entre elementos internos */
+}
 .users-table-container .btn-edit {
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
@@ -276,3 +294,160 @@
 }
 
 
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    padding-bottom: 10px;
+}
+.search-info {
+    padding: 5px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.btn-pagina {
+    padding: 10px 2px;    
+    color: black;   
+    text-align: center;
+    /* border: none; */
+    /* border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500; */
+    text-align: center;
+    transition: all 0.3s ease;
+    /* text-decoration: none; */
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-pagina-activa {
+    padding: 8px 8px;    
+    background: var(--gradiente-violeta);
+    color: white;
+}
+
+/* .pagination-container .pagination-item {
+    padding: 1px 2px;
+} */
+
+/* ===== ESTILOS PARA EL BUSCADOR EN TIEMPO REAL ===== */
+.users-table-container .search-container input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+    font-style: italic;
+}
+
+.users-table-container .search-container input:focus {
+    outline: none;
+    color: white;
+}
+
+.users-table-container .search-container:focus-within {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== EFECTOS DE DESTACADO EN BÚSQUEDA ===== */
+.users-table-container mark {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%) !important;
+    color: #856404 !important;
+    font-weight: 600;
+    border-radius: 3px;
+    padding: 2px 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== ESTILOS PARA BOTONES MEJORADOS ===== */
+.users-table-container .btn-edit {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.users-table-container .btn-edit:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
+.users-table-container .btn-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.users-table-container .btn-delete:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== ESTADÍSTICAS DE LA TABLA ===== */
+.users-table-container .table-stats {
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    font-weight: 500;
+}
+
+.users-table-container .table-stats .fw-bold {
+    color: var(--gradiente-violeta);
+    font-weight: 700;
+}
+
+/* ===== ANIMACIONES PARA FILAS DE TABLA ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.users-table-container .users-table tbody tr {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ===== RESPONSIVE MEJORADO PARA BÚSQUEDA ===== */
+@media (max-width: 768px) {
+    .users-table-container .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .users-table-container .search-container {
+        min-width: 100%;
+        max-width: none;
+    }
+    
+    .users-table-container .search-container input {
+        font-size: 16px; /* Evita zoom en iOS */
+    }
+}
+
+/* ===== MEJORAS DE ACCESIBILIDAD ===== */
+.users-table-container .btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.users-table-container .search-container input:focus {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}

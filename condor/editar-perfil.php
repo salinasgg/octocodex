@@ -71,7 +71,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $foto_perfil = $userData['us_foto_perfil']; // Mantener la actual si no se sube nueva
         
         if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === UPLOAD_ERR_OK) {
-            // Código exacto que funcionó en debug_editar_perfil_final.php
+            // Código para procesar imagen de perfil
             $uploadDir = __DIR__ . '/uploads/perfiles/';
             $newFileName = 'perfil_' . $userId . '_' . time() . '_' . $_FILES['foto_perfil']['name'];
             $uploadPath = $uploadDir . $newFileName;
@@ -188,9 +188,9 @@ function initializeEditForm() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Guardando...';
             submitBtn.disabled = true;
             
-            console.log('🌐 Enviando AJAX a:', '../test_editar_perfil_completo.php');
+            console.log('🌐 Enviando AJAX a:', 'editar-perfil.php');
             $.ajax({
-                url: '../test_editar_perfil_completo.php',
+                url: 'editar-perfil.php',
                 method: 'POST',
                 data: formData,
                 processData: false,

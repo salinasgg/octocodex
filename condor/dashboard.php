@@ -100,6 +100,78 @@ if (isset($_GET['logout'])) {
             transform: translateY(-2px);
         }
 
+        /* Estilos específicos para asignaciones */
+        .assignments-container {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .text-primary {
+            color: #8b5cf6 !important;
+        }
+
+        .nav-tabs .nav-link {
+            color: #64748b;
+            border: none;
+            margin-right: 8px;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #8b5cf6;
+            color: white !important;
+            border-color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .header-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(10px, -10px) rotate(5deg); }
+        }
+
+        .alert-info {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #7c3aed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
         .stats-card {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
@@ -161,8 +233,11 @@ if (isset($_GET['logout'])) {
                         <a class="nav-link active" href="#">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a>
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="#" id="usuarios-btn">
                             <i class="fas fa-users me-2"></i>Usuarios
+                        </a>
+                        <a class="nav-link" href="#" id="asignaciones-btn">
+                            <i class="fas fa-user-cog me-2"></i>Asignaciones de Proyectos
                         </a>
                         <a class="nav-link" href="#">
                             <i class="fas fa-chart-bar me-2"></i>Reportes
@@ -338,9 +413,12 @@ if (isset($_GET['logout'])) {
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/logout.js"></script>
+    <script src="js/funciones.js"></script>
     <script>
         // Script para el dashboard
         console.log('Dashboard cargado correctamente');
@@ -351,6 +429,247 @@ if (isset($_GET['logout'])) {
             username: '<?php echo $username; ?>',
             rol: '<?php echo $rol; ?>',
             email: '<?php echo $email; ?>'
+        });
+
+        // ==================== GESTIÓN DE ASIGNACIONES ====================
+
+        // Funciones de navegación
+        function mostrarAsignaciones() {
+            console.log('🔍 Mostrando vista de asignaciones');
+            
+            // Actualizar navegación activa
+            $('.nav-link').removeClass('active');
+            $('#asignaciones-btn').addClass('active');
+            
+            // Cargar contenido de asignaciones
+            $('.main-content').html(`
+                <div class="assignments-container">
+                    <div class="container-fluid">
+                        <!-- Header de asignaciones -->
+                        <div class="header-section" style="background: var(--gradiente-violeta, linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%)); padding: 30px; border-radius: 16px; color: white; margin-bottom: 30px;">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h1 class="mb-2">
+                                        <i class="fas fa-user-cog me-3"></i>Gestión de Asignaciones de Proyectos
+                                    </h1>
+                                    <p class="mb-0 opacity-90">Administra la asignación de usuarios a proyectos y supervisa el equipo de trabajo</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-light" onclick="cargarEstadisticasAsignaciones()">
+                                        <i class="fas fa-sync-alt me-2"></i>Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estadísticas principales -->
+                        <div class="row mb-4" id="estadisticas-row">
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-project-diagram fa-2x text-primary mb-3"></i>
+                                        <h3 class="text-primary" id="stat-proyectos">0</h3>
+                                        <p class="text-muted mb-0">Proyectos con Asignaciones</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-2x text-success mb-3"></i>
+                                        <h3 class="text-success" id="stat-usuarios">0</h3>
+                                        <p class="text-muted mb-0">Usuarios Asignados</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-tasks fa-2x text-info mb-3"></i>
+                                        <h3 class="text-info" id="stat-asignaciones">0</h3>
+                                        <p class="text-muted mb-0">Total Asignaciones</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-clock fa-2x text-warning mb-3"></i>
+                                        <h3 class="text-warning" id="stat-horas">0</h3>
+                                        <p class="text-muted mb-0">Horas Trabajadas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pestañas de contenido -->
+                        <ul class="nav nav-tabs mb-4" id="assignmentTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#tab-proyectos">
+                                    <i class="fas fa-project-diagram me-2"></i>Por Proyectos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#tab-usuarios">
+                                    <i class="fas fa-users me-2"></i>Por Usuarios
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#tab-roles">
+                                    <i class="fas fa-user-tag me-2"></i>Por Roles
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Contenido de pestañas -->
+                        <div class="tab-content">
+                            <!-- Vista por proyectos -->
+                            <div class="tab-pane fade show active" id="tab-proyectos">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-project-diagram me-2"></i>Asignaciones por Proyecto
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="loading-proyectos" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                            <p class="mt-2 text-muted">Cargando asignaciones...</p>
+                                        </div>
+                                        <div id="contenido-proyectos" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vista por usuarios -->
+                            <div class="tab-pane fade" id="tab-usuarios">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-users me-2"></i>Asignaciones por Usuario
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="loading-usuarios" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                            <p class="mt-2 text-muted">Cargando usuarios...</p>
+                                        </div>
+                                        <div id="contenido-usuarios" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vista por roles -->
+                            <div class="tab-pane fade" id="tab-roles">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-user-tag me-2"></i>Distribución por Roles
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="loading-roles" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                            <p class="mt-2 text-muted">Analizando roles...</p>
+                                        </div>
+                                        <div id="contenido-roles" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+            
+            // Cargar datos iniciales
+            setTimeout(() => {
+                cargarEstadisticasAsignaciones();
+                cargarAsignacionesPorProyectos();
+            }, 100);
+        }
+
+        // Cargar estadísticas generales
+        function cargarEstadisticasAsignaciones() {
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { accion: 'obtener_estadisticas' },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito) {
+                        const stats = response.estadisticas;
+                        $('#stat-proyectos').text(stats.proyectos_con_asignaciones || 0);
+                        $('#stat-usuarios').text(stats.usuarios_asignados || 0);
+                        $('#stat-asignaciones').text(stats.total_asignaciones || 0);
+                        $('#stat-horas').text(Math.round(stats.total_horas_trabajadas || 0));
+                    }
+                },
+                error: function() {
+                    console.error('Error al cargar estadísticas');
+                }
+            });
+        }
+
+        // Cargar asignaciones por proyectos
+        function cargarAsignacionesPorProyectos() {
+            // Simular carga de datos de proyectos con asignaciones
+            setTimeout(() => {
+                $('#loading-proyectos').hide();
+                $('#contenido-proyectos').show().html(`
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Funcionalidad en desarrollo</strong><br>
+                        Esta vista mostrará todos los proyectos con sus respectivas asignaciones de usuarios.
+                        Para gestionar asignaciones específicas, ve a la sección de Proyectos y edita cada proyecto individualmente.
+                    </div>
+                    <div class="text-center py-4">
+                        <a href="proyectos.php" class="btn btn-primary">
+                            <i class="fas fa-arrow-right me-2"></i>Ir a Gestión de Proyectos
+                        </a>
+                    </div>
+                `);
+            }, 1000);
+        }
+
+        // Eventos del DOM
+        $(document).ready(function() {
+            // Inicializar funciones existentes
+            if (typeof funciones !== 'undefined' && funciones.mostrarModalUsuarios) {
+                funciones.mostrarModalUsuarios();
+            }
+
+            // Evento para mostrar asignaciones
+            $('#asignaciones-btn').click(function(e) {
+                e.preventDefault();
+                mostrarAsignaciones();
+            });
+
+            // Eventos para cambio de pestañas
+            $(document).on('shown.bs.tab', 'a[data-bs-toggle="tab"]', function (e) {
+                const target = $(e.target).attr('href');
+                
+                if (target === '#tab-usuarios') {
+                    setTimeout(() => {
+                        $('#loading-usuarios').hide();
+                        $('#contenido-usuarios').show().html(`
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Vista de usuarios con sus asignaciones en desarrollo.
+                            </div>
+                        `);
+                    }, 500);
+                } else if (target === '#tab-roles') {
+                    setTimeout(() => {
+                        $('#loading-roles').hide();
+                        $('#contenido-roles').show().html(`
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Análisis de distribución de roles en desarrollo.
+                            </div>
+                        `);
+                    }, 500);
+                }
+            });
         });
     </script>
 </body>
