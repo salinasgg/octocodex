@@ -281,7 +281,7 @@ ALTER TABLE `historial_cliente`
 --
 
 CREATE TABLE `proyectos` (
-  `id` int(11) NOT NULL COMMENT 'ID único del proyecto',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID único del proyecto',
   `pr_titulo` varchar(200) NOT NULL COMMENT 'Título del proyecto',
   `pr_descripcion` text DEFAULT NULL COMMENT 'Descripción detallada del proyecto',
   `pr_estado` enum('propuesta','en_desarrollo','en_revision','finalizado','cancelado','pausado') NOT NULL DEFAULT 'propuesta' COMMENT 'Estado actual del proyecto',
@@ -295,7 +295,8 @@ CREATE TABLE `proyectos` (
   `usuario_id` int(11) DEFAULT NULL COMMENT 'ID del usuario responsable del proyecto',
   `pr_activo` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Estado activo/inactivo del proyecto',
   `fecha_creacion` timestamp NULL DEFAULT current_timestamp() COMMENT 'Fecha de creación del proyecto',
-  `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Fecha de última actualización'
+  `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Fecha de última actualización',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla de proyectos del sistema';
 
 --
@@ -338,7 +339,6 @@ INSERT INTO `tareas_proyecto` (`proyecto_id`, `ta_titulo`, `ta_descripcion`, `ta
 --
 
 ALTER TABLE `proyectos`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `idx_cliente_id` (`cliente_id`),
   ADD KEY `idx_usuario_id` (`usuario_id`),
   ADD KEY `idx_pr_estado` (`pr_estado`),
@@ -360,8 +360,8 @@ ALTER TABLE `tareas_proyecto`
 -- AUTO_INCREMENT para las tablas
 --
 
-ALTER TABLE `proyectos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID único del proyecto';
+
+
 
 
 

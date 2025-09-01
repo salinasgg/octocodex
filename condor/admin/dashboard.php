@@ -135,7 +135,7 @@ if (isset($_GET['logout'])) {
             <div class="col-md-3 col-lg-2 px-0" id="sidebar">
                 <div class="sidebar p-3">
                     <nav class="nav flex-column">
-                        <a class="nav-link active" href="#">
+                        <a class="nav-link active" href="#" id="dashboard-btn">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a>
                         <a class="nav-link" href="#" id="usuarios-btn">
@@ -354,12 +354,60 @@ if (isset($_GET['logout'])) {
         funciones.mostrarModalUsuarios();
         funciones.inicializarModalEvents(); // Inicializar eventos de la modal
 
+        $('#dashboard-btn').click(function(e) {
+            e.preventDefault();
+            console.log('🏠 Cargando dashboard home desde botón...');
+            console.log('📋 Estado actual del contenedor .construccion:', $('.construccion').length > 0 ? 'Existe' : 'No existe');
+            
+            // Actualizar navegación activa
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+            
+            // Asegurar que el contenedor existe
+            if ($('.construccion').length === 0) {
+                console.log('⚠️ Contenedor .construccion no existe, recreándolo...');
+                $('.main-content').html(`
+                    <div class="container-fluid">
+                        <div class="row construccion">
+                        </div>
+                    </div>
+                `);
+            }
+            
+            // Cargar en el contenedor correcto (.construccion)
+            $('.construccion').html('<div class="text-center p-5"><i class="fas fa-spinner fa-spin fa-3x text-primary"></i><p class="mt-3">Cargando dashboard...</p></div>');
+            
+            $.ajax({
+                url: 'dashboard_home.php',
+                method: 'GET',
+                success: function(response) {
+                    $('.construccion').html(response);
+                    console.log('✅ Dashboard home cargado correctamente desde botón');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar dashboard_home.php:', xhr.status, xhr.statusText);
+                    $('.construccion').html(`
+                        <div class="alert alert-danger m-4">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Error al cargar el dashboard</h5>
+                            <p>No se pudo cargar el contenido principal. Error: ${xhr.status} - ${xhr.statusText}</p>
+                            <button class="btn btn-outline-danger btn-sm" onclick="$('#dashboard-btn').click()">
+                                <i class="fas fa-redo me-1"></i>Intentar de nuevo
+                            </button>
+                        </div>
+                    `);
+                }
+            });
+        });
+
         // Función para mostrar asignaciones de proyectos
         function mostrarAsignaciones() {
+            console.log('🔧 Cargando sección de asignaciones...');
+            
             $('.nav-link').removeClass('active');
             $('#asignaciones-btn').addClass('active');
             
-            $('.main-content').html(`
+            // Usar el mismo contenedor que dashboard para consistencia
+            $('.construccion').html(`
                 <div class="assignments-container">
                     <!-- Header Section -->
                     <div class="header-section" style="background: var(--gradiente-violeta); padding: 2rem; border-radius: 15px; margin-bottom: 2rem; color: white; box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);">
@@ -984,10 +1032,10 @@ if (isset($_GET['logout'])) {
         // Generar badge de prioridad
         function obtenerBadgePrioridad(prioridad) {
             const prioridades = {
-                'alta': '<span class="badge" style="background: #dc3545;">Alta</span>',
-                'media': '<span class="badge" style="background: #ffc107; color: #000;">Media</span>',
-                'baja': '<span class="badge" style="background: #28a745;">Baja</span>',
-                'critica': '<span class="badge" style="background: #6f42c1;">Crítica</span>'
+                'alta': '<span class="badge" style="background: #dc3545; color:black;">Alta</span>',
+                'media': '<span class="badge" style="background: #ffc107; color:black;">Media</span>',
+                'baja': '<span class="badge" style="background: #28a745; color:black;">Baja</span>',
+                'critica': '<span class="badge" style="background: #6f42c1; color:black;">Crítica</span>'
             };
             return prioridades[prioridad] || '<span class="badge bg-secondary">' + (prioridad || 'N/A') + '</span>';
         }
@@ -2333,6 +2381,47 @@ if (isset($_GET['logout'])) {
             setupModalNavigation();
         });
 
+        // Event listener para el menú de usuarios
+        $('#usuarios-btn').on('click', function(e) {
+            e.preventDefault();
+            console.log('👥 Cargando sección de usuarios...');
+            
+            $('.nav-link').removeClass('active');
+            $(this).addClass('active');
+            
+            // Mostrar mensaje de construcción para usuarios
+            $('.construccion').html(`
+                <div class="container-fluid p-0">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-lg" style="background: var(--gradiente-violeta); border-radius: 20px;">
+                                <div class="card-body text-white p-4 text-center">
+                                    <h1 class="display-6 fw-bold mb-2">
+                                        <i class="fas fa-users fa-2x me-3"></i>Gestión de Usuarios
+                                    </h1>
+                                    <p class="lead mb-0 opacity-90">
+                                        Administra y gestiona todos los usuarios del sistema
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                                <div class="card-body text-center p-5">
+                                    <i class="fas fa-tools fa-4x text-muted mb-3"></i>
+                                    <h3 class="text-muted">Sección en Construcción</h3>
+                                    <p class="text-muted">La gestión de usuarios estará disponible próximamente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+
         // Event listener para el menú de asignaciones
         $('#asignaciones-btn').on('click', function(e) {
             e.preventDefault();
@@ -2397,17 +2486,26 @@ if (isset($_GET['logout'])) {
                 console.error('❌ cargarAsignacionesPorProyecto no está definida');
             }
         }, 1000);
-        // Cargar el contenido de construccion.php en el div construccion
+        // Cargar el contenido del dashboard principal
         $(document).ready(function() {
             $.ajax({
-                url: 'construccion.php',
+                url: 'dashboard_home.php',
                 method: 'GET',
                 success: function(response) {
                     $('.construccion').html(response);
+                    console.log('✅ Dashboard home cargado correctamente');
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error al cargar construccion.php:', error);
-                    $('.construccion').html('<div class="alert alert-danger">Error al cargar el contenido</div>');
+                    console.error('Error al cargar dashboard_home.php:', error);
+                    $('.construccion').html(`
+                        <div class="alert alert-danger m-4">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Error al cargar el dashboard</h5>
+                            <p>No se pudo cargar el contenido principal. Por favor, recarga la página.</p>
+                            <button class="btn btn-outline-danger btn-sm" onclick="location.reload()">
+                                <i class="fas fa-redo me-1"></i>Recargar página
+                            </button>
+                        </div>
+                    `);
                 }
             });
         });

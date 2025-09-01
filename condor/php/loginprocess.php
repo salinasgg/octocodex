@@ -246,6 +246,10 @@ try {
         $_SESSION['rol'] = $result['user']['us_rol'];
         $_SESSION['email'] = $result['user']['us_email'];
         $_SESSION['nombre_completo'] = $result['user']['us_nombre'] . ' ' . $result['user']['us_apellido'];
+        $_SESSION['us_nombre'] = $result['user']['us_nombre'];
+        $_SESSION['us_apellido'] = $result['user']['us_apellido'];
+        $_SESSION['us_foto_perfil'] = $result['user']['us_foto_perfil'];
+        $_SESSION['us_url_perfil'] = $result['user']['us_url_perfil'];
         $_SESSION['logged_in'] = true;
         $_SESSION['login_time'] = time();
         
