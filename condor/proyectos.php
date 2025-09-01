@@ -648,7 +648,7 @@ $nombre_completo = $_SESSION['nombre_completo'];
             <div class="trello-column" data-estado="en_revision">
                 <div class="column-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                     <h5 class="column-title">
-                        <img src="icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">En Revisión
+                        <i class="fas fa-eye me-2"></i>En Revisión
                     </h5>
                     <span class="project-count">0</span>
                 </div>
@@ -876,7 +876,7 @@ $nombre_completo = $_SESSION['nombre_completo'];
             <div class="modal-content">
                 <div class="modal-header" style="background: var(--gradiente-violeta); color: white;">
                     <h5 class="modal-title" id="modalDetalleTitle">
-                        <img src="icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Detalle del Proyecto
+                        <i class="fas fa-eye me-2"></i>Detalle del Proyecto
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>

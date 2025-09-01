@@ -235,7 +235,7 @@ function crearTarjetaProyecto(proyecto) {
                         <i class="fas fa-edit me-2"></i>Editar
                     </a></li>
                     <li><a class="dropdown-item" href="#" onclick="verDetalleProyecto(${proyecto.id}); event.preventDefault();">
-                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Ver Detalle
+                        <i class="fas fa-eye me-2"></i>Ver Detalle
                     </a></li>
                     <li><a class="dropdown-item" href="#" onclick="duplicarProyecto(${proyecto.id}); event.preventDefault();">
                         <i class="fas fa-copy me-2"></i>Duplicar
@@ -705,7 +705,7 @@ function verDetalleProyecto(id) {
         
         // Actualizar título del modal
         document.getElementById('modalDetalleTitle').innerHTML = 
-            `<img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Detalle del Proyecto: ${proyecto.pr_titulo}`;
+            `<i class="fas fa-eye me-2"></i>Detalle del Proyecto: ${proyecto.pr_titulo}`;
         
         // Llenar información general
         document.getElementById('detalle-titulo').textContent = proyecto.pr_titulo;
@@ -1721,7 +1721,7 @@ function crearModalDetalleProyectoDinamico() {
             <div class="modal-content">
                 <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
                     <h5 class="modal-title" id="modalDetalleTitle">
-                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Detalle del Proyecto
+                        <i class="fas fa-eye me-2"></i>Detalle del Proyecto
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>

@@ -847,7 +847,7 @@ if (isset($_GET['logout'])) {
                                 <button type="button" class="btn btn-sm btn-outline-primary" 
                                         onclick="verDetalleProyecto(${proyecto.proyecto_id})" 
                                         title="Ver detalle">
-                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-success" 
                                         onclick="gestionarAsignacionesProyecto(${proyecto.proyecto_id})" 
@@ -1011,7 +1011,7 @@ if (isset($_GET['logout'])) {
                                     <button type="button" class="btn btn-sm btn-outline-primary" 
                                             onclick="verDetalleUsuario(${usuario.usuario_id})" 
                                             title="Ver detalle">
-                                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
+                                        <i class="fas fa-eye"></i>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-success" 
                                             onclick="gestionarAsignacionesUsuario(${usuario.usuario_id})" 
@@ -2578,7 +2578,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordActual" name="passwordActual" class="form-control" 
                                     placeholder="Ingrese su contraseña actual" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordActual">
-                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordActual" style="display: none;">
@@ -2597,7 +2597,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordNueva" name="passwordNueva" class="form-control" 
                                     placeholder="Ingrese la nueva contraseña (mínimo 6 caracteres)" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordNueva">
-                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordNueva" style="display: none;">
@@ -2616,7 +2616,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordConfirmar" name="passwordConfirmar" class="form-control" 
                                     placeholder="Confirme la nueva contraseña" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordConfirmar">
-                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
+                                    <i class="fas fa-eye"></i>
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordConfirmar" style="display: none;">
