@@ -303,7 +303,7 @@ CREATE TABLE `proyectos` (
 --
 
 CREATE TABLE `tareas_proyecto` (
-  `id` int(11) NOT NULL COMMENT 'ID único de la tarea',
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID único de la tarea',
   `proyecto_id` int(11) NOT NULL COMMENT 'ID del proyecto asociado',
   `ta_titulo` varchar(200) NOT NULL COMMENT 'Título de la tarea',
   `ta_descripcion` text DEFAULT NULL COMMENT 'Descripción de la tarea',
@@ -312,7 +312,8 @@ CREATE TABLE `tareas_proyecto` (
   `ta_prioridad` enum('baja','media','alta') NOT NULL DEFAULT 'media' COMMENT 'Prioridad de la tarea',
   `usuario_asignado_id` int(11) DEFAULT NULL COMMENT 'ID del usuario asignado a la tarea',
   `fecha_creacion` timestamp NULL DEFAULT current_timestamp() COMMENT 'Fecha de creación de la tarea',
-  `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Fecha de última actualización'
+  `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Fecha de última actualización',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla de tareas de proyectos';
 
 -- Insertar datos de ejemplo
@@ -348,7 +349,6 @@ ALTER TABLE `proyectos`
   ADD CONSTRAINT `fk_proyectos_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE SET NULL;
 
 ALTER TABLE `tareas_proyecto`
-  ADD PRIMARY KEY (`id`),
   ADD KEY `idx_proyecto_id` (`proyecto_id`),
   ADD KEY `idx_usuario_asignado_id` (`usuario_asignado_id`),
   ADD KEY `idx_ta_estado` (`ta_estado`),
@@ -363,8 +363,7 @@ ALTER TABLE `tareas_proyecto`
 ALTER TABLE `proyectos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID único del proyecto';
 
-ALTER TABLE `tareas_proyecto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID único de la tarea';
+
 
 -- finalizado proyectos 31/08/2025
 
@@ -426,6 +425,7 @@ ALTER TABLE `usuarios`
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
+
 
 --
 -- AUTO_INCREMENT de la tabla `logs_acceso`

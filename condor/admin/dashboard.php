@@ -508,6 +508,15 @@ if (isset($_GET['logout'])) {
                                     </h5>
                                 </div>
                                 <div class="card-body p-0">
+                                    <!-- Botón para Nueva Asignación -->
+                                    <div class="p-3 border-bottom" style="background: rgba(139, 92, 246, 0.03);">
+                                        <button type="button" class="btn btn-primary" id="btnNuevaAsignacionProyecto" 
+                                                style="background: var(--gradiente-violeta); border: none; border-radius: 10px; font-weight: 600;">
+                                            <i class="fas fa-plus me-2"></i>Nueva Asignación de Proyecto
+                                        </button>
+                                        <small class="text-muted ms-3">Asigna usuarios a proyectos de manera rápida y eficiente</small>
+                                    </div>
+                                    
                                     <div class="table-responsive">
                                         <table class="table table-hover mb-0">
                                             <thead style="background: #f8f9fa;">
@@ -2330,6 +2339,44 @@ if (isset($_GET['logout'])) {
             mostrarAsignaciones();
         });
 
+        // Event listener para el botón Nueva Asignación de Proyecto
+        $(document).on('click', '#btnNuevaAsignacionProyecto', function(e) {
+            e.preventDefault();
+            console.log('🎯 Abriendo modal de asignaciones desde botón independiente...');
+            
+            // Configurar variables globales para modo "nueva asignación"
+            window.currentEntityId = null;
+            window.currentEntityType = 'proyecto';
+            
+            // Configurar título del modal
+            $('#modal-title-text').html('<i class="fas fa-plus me-2"></i>Nueva Asignación de Proyecto');
+            
+            // Configurar navegación de tabs - ir directo al tab "Nueva Asignación"
+            $('.tab-pane').removeClass('active');
+            $('#add-assignment').addClass('active');
+            $('.modal-tab').removeClass('active');
+            $('.modal-tab[data-tab="add"]').addClass('active');
+            
+            // Mostrar botón de guardar
+            $('#btnGuardarAsignacion').show();
+            
+            // Limpiar formulario
+            document.getElementById('formNuevaAsignacion').reset();
+            $('#add-assignment .alert').remove();
+            $('#proyecto-info, #usuario-info, #alerta-asignacion-existente, #sugerencias-rol').remove();
+            
+            // Cargar datos para los selects
+            console.log('🔄 Cargando datos para nueva asignación...');
+            cargarProyectosSelect();
+            cargarUsuariosSelect(null); // Sin proyecto específico inicialmente
+            
+            // Abrir modal
+            const modal = new bootstrap.Modal(document.getElementById('modalGestionAsignaciones'));
+            modal.show();
+            
+            console.log('✅ Modal abierto en modo Nueva Asignación');
+        });
+
         // Script para el dashboard
         console.log('🎯 === DASHBOARD INICIANDO ===');
         console.log('✅ Dashboard cargado correctamente');
@@ -2900,6 +2947,17 @@ if (isset($_GET['logout'])) {
         /* Mejorar la apariencia del botón Guardar Asignación */
         #btnGuardarAsignacion {
             /* Controlado por JavaScript, no por CSS */
+        }
+        
+        /* Estilo para el botón Nueva Asignación de Proyecto */
+        #btnNuevaAsignacionProyecto {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+        
+        #btnNuevaAsignacionProyecto:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
         }
 
         /* Animación para el cambio de tabs */
