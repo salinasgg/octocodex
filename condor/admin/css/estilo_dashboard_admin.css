@@ -12,6 +12,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background: var(--secondary-color);
+            font-size: 13px;
         }
 
         .navbar {
@@ -33,7 +34,7 @@
             background: white;
             min-height: 150%;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            width: 16vw;
+            width: 13vw;
         }
 
         .sidebar .nav-link {

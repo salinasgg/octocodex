@@ -135,15 +135,19 @@ if (isset($_GET['logout'])) {
             <div class="col-md-3 col-lg-2 px-0" id="sidebar">
                 <div class="sidebar p-3">
                     <nav class="nav flex-column">
+                    <!-- <hr style="border: none; height: 1px; background: var(--gradiente-violeta);"> -->
                         <a class="nav-link active" href="#" id="dashboard-btn">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            Dashboard
                         </a>
+                        <!-- <hr style="border: none; height: 1px; background: var(--gradiente-violeta);"> -->
                         <a class="nav-link" href="#" id="usuarios-btn">
-                            <i class="fas fa-users me-2"></i>Usuarios
+                            Usuarios
                         </a>
+                        <!-- <hr style="border: none; height: 1px; background: var(--gradiente-violeta);"> -->
                         <a class="nav-link" href="#" id="asignaciones-btn">
-                            <i class="fas fa-user-cog me-2"></i>Asignaciones de Proyectos
+                            Asignaciones de Proyectos
                         </a>
+                        <!-- <hr style="border: none; height: 1px; background: var(--gradiente-violeta);"> -->
                         <!-- <a class="nav-link" href="#">
                             <i class="fas fa-chart-bar me-2"></i>Reportes
                         </a>
@@ -402,9 +406,21 @@ if (isset($_GET['logout'])) {
         // Función para mostrar asignaciones de proyectos
         function mostrarAsignaciones() {
             console.log('🔧 Cargando sección de asignaciones...');
+            console.log('📋 Estado actual del contenedor .construccion:', $('.construccion').length > 0 ? 'Existe' : 'No existe');
             
             $('.nav-link').removeClass('active');
             $('#asignaciones-btn').addClass('active');
+            
+            // Asegurar que el contenedor existe
+            if ($('.construccion').length === 0) {
+                console.log('⚠️ Contenedor .construccion no existe, recreándolo...');
+                $('.main-content').html(`
+                    <div class="container-fluid">
+                        <div class="row construccion">
+                        </div>
+                    </div>
+                `);
+            }
             
             // Usar el mismo contenedor que dashboard para consistencia
             $('.construccion').html(`
@@ -2385,9 +2401,21 @@ if (isset($_GET['logout'])) {
         $('#usuarios-btn').on('click', function(e) {
             e.preventDefault();
             console.log('👥 Cargando sección de usuarios...');
+            console.log('📋 Estado actual del contenedor .construccion:', $('.construccion').length > 0 ? 'Existe' : 'No existe');
             
             $('.nav-link').removeClass('active');
             $(this).addClass('active');
+            
+            // Asegurar que el contenedor existe
+            if ($('.construccion').length === 0) {
+                console.log('⚠️ Contenedor .construccion no existe, recreándolo...');
+                $('.main-content').html(`
+                    <div class="container-fluid">
+                        <div class="row construccion">
+                        </div>
+                    </div>
+                `);
+            }
             
             // Mostrar mensaje de construcción para usuarios
             $('.construccion').html(`
