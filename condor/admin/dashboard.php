@@ -596,9 +596,9 @@ if (isset($_GET['logout'])) {
 
         // Cargar estadísticas generales
         function cargarEstadisticasAsignaciones() {
-            console.log('Cargando estadísticas desde: /octocodex/condor/php/asignaciones_proyectos.php');
+            console.log('Cargando estadísticas desde: php/asignaciones_proyectos.php');
             $.ajax({
-                url: '/octocodex/condor/php/asignaciones_proyectos.php',
+                url: 'php/asignaciones_proyectos.php',
                 method: 'GET',
                 data: { accion: 'obtener_estadisticas' },
                 dataType: 'json',
@@ -634,7 +634,8 @@ if (isset($_GET['logout'])) {
 
         // Cargar asignaciones por proyecto
         function cargarAsignacionesPorProyecto() {
-            console.log('Cargando proyectos desde: /octocodex/condor/php/asignaciones_proyectos.php');
+            console.log('🚀 === INICIANDO CARGA DE ASIGNACIONES POR PROYECTO ===');
+            console.log('Cargando proyectos desde: php/asignaciones_proyectos.php');
             $('#projects-table-body').html(`
                 <tr>
                     <td colspan="6" class="text-center p-4">
@@ -649,7 +650,7 @@ if (isset($_GET['logout'])) {
             `);
 
             $.ajax({
-                url: '/octocodex/condor/php/asignaciones_proyectos.php',
+                url: 'php/asignaciones_proyectos.php',
                 method: 'GET',
                 data: { accion: 'listar_proyectos_con_asignaciones' },
                 dataType: 'json',
@@ -773,7 +774,7 @@ if (isset($_GET['logout'])) {
                                 <button type="button" class="btn btn-sm btn-outline-primary" 
                                         onclick="verDetalleProyecto(${proyecto.proyecto_id})" 
                                         title="Ver detalle">
-                                    <i class="fas fa-eye"></i>
+                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
                                 </button>
                                 <button type="button" class="btn btn-sm btn-outline-success" 
                                         onclick="gestionarAsignacionesProyecto(${proyecto.proyecto_id})" 
@@ -791,7 +792,7 @@ if (isset($_GET['logout'])) {
 
         // Cargar asignaciones por usuario
         function cargarAsignacionesPorUsuario() {
-            console.log('Cargando usuarios desde: /octocodex/condor/php/asignaciones_proyectos.php');
+            console.log('Cargando usuarios desde: php/asignaciones_proyectos.php');
             $('#users-table-body').html(`
                 <tr>
                     <td colspan="6" class="text-center p-4">
@@ -806,7 +807,7 @@ if (isset($_GET['logout'])) {
             `);
 
             $.ajax({
-                url: '/octocodex/condor/php/asignaciones_proyectos.php',
+                url: 'php/asignaciones_proyectos.php',
                 method: 'GET',
                 data: { accion: 'listar_usuarios_con_asignaciones' },
                 dataType: 'json',
@@ -937,7 +938,7 @@ if (isset($_GET['logout'])) {
                                     <button type="button" class="btn btn-sm btn-outline-primary" 
                                             onclick="verDetalleUsuario(${usuario.usuario_id})" 
                                             title="Ver detalle">
-                                        <i class="fas fa-eye"></i>
+                                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-success" 
                                             onclick="gestionarAsignacionesUsuario(${usuario.usuario_id})" 
@@ -1115,23 +1116,78 @@ if (isset($_GET['logout'])) {
 
         // Ver detalle de proyecto
         function verDetalleProyecto(proyectoId) {
-            console.log('Ver detalle del proyecto:', proyectoId);
-            // Aquí se implementaría el modal de detalle del proyecto
-            alert('Funcionalidad en desarrollo: Ver detalle del proyecto ' + proyectoId);
+            console.log('🔧 Dashboard: Ver detalle del proyecto:', proyectoId);
+            console.log('🔍 Verificando disponibilidad de función verDetalleProyectoDesdeAsignaciones...');
+            
+            // Función para intentar cargar el detalle
+            function intentarCargarDetalle() {
+                if (typeof verDetalleProyectoDesdeAsignaciones === 'function') {
+                    console.log('✅ Función encontrada, llamando verDetalleProyectoDesdeAsignaciones...');
+                    verDetalleProyectoDesdeAsignaciones(proyectoId);
+                    return true;
+                }
+                return false;
+            }
+            
+            // Intentar inmediatamente
+            if (intentarCargarDetalle()) {
+                return;
+            }
+            
+            // Si no está disponible, esperar un poco y reintentar
+            console.log('⏳ Función no disponible inmediatamente, esperando carga de scripts...');
+            setTimeout(function() {
+                if (intentarCargarDetalle()) {
+                    return;
+                }
+                
+                // Último intento después de más tiempo
+                setTimeout(function() {
+                    if (!intentarCargarDetalle()) {
+                        console.error('❌ Función verDetalleProyectoDesdeAsignaciones no disponible después de esperar');
+                        console.log('📋 Funciones disponibles en window:', Object.keys(window).filter(key => key.includes('Proyecto')));
+                        
+                        // Fallback: mostrar un modal básico con los datos disponibles
+                        mostrarDetalleBasico(proyectoId);
+                    }
+                }, 1000);
+            }, 500);
+        }
+        
+        // Fallback: modal básico si no se puede cargar ABMProyectos.js
+        function mostrarDetalleBasico(proyectoId) {
+            alert('Cargando detalle del proyecto #' + proyectoId + '\n\nNota: Funcionalidad completa en desarrollo.\nPor favor recarga la página si persiste el problema.');
         }
 
         // Gestionar asignaciones de proyecto
         function gestionarAsignacionesProyecto(proyectoId) {
-            console.log('Gestionar asignaciones del proyecto:', proyectoId);
+            console.log('🔧 Gestionar asignaciones del proyecto:', proyectoId);
             window.currentEntityId = proyectoId;
             window.currentEntityType = 'proyecto';
             
+            // Actualizar título del modal
             $('#modal-title-text').html('<i class="fas fa-project-diagram me-2"></i>Gestionar Asignaciones - Proyecto #' + proyectoId);
+            
+            // Cargar datos
             cargarAsignacionesModal(proyectoId, 'proyecto');
             cargarSelectoresModal();
             
+            // Reinicializar tabs - asegurar que el primer tab esté activo
+            $('.modal-tab').removeClass('active').css('color', '#6b7280');
+            $('.modal-tab[data-tab="current"]').addClass('active').css('color', '#8b5cf6');
+            
+            // Mostrar contenido del primer tab y ocultar otros
+            $('.tab-pane').removeClass('active');
+            $('#current-assignments').addClass('active');
+            
+            // Ocultar botón de guardar inicialmente
+            $('#btnGuardarAsignacion').hide();
+            
+            // Abrir modal
             const modal = new bootstrap.Modal(document.getElementById('modalGestionAsignaciones'));
             modal.show();
+            
+            console.log('✅ Modal de gestión de asignaciones abierto');
         }
 
         // Ver detalle de usuario
@@ -1162,20 +1218,45 @@ if (isset($_GET['logout'])) {
                 e.preventDefault();
                 
                 const tab = $(this).data('tab');
+                console.log('🔄 Cambiando a tab:', tab);
                 
                 // Actualizar tabs activos
                 $('.modal-tab').removeClass('active').css('color', '#6b7280');
                 $(this).addClass('active').css('color', '#8b5cf6');
                 
-                // Mostrar contenido del tab
+                // Mostrar contenido del tab (corregido para usar nombres reales)
                 $('.tab-pane').removeClass('active');
-                $(`#${tab}-assignments`).addClass('active');
+                
+                let targetTab;
+                switch(tab) {
+                    case 'current':
+                        targetTab = '#current-assignments';
+                        break;
+                    case 'add':
+                        targetTab = '#add-assignment';
+                        break;
+                    case 'history':
+                        targetTab = '#history-assignments';
+                        break;
+                    default:
+                        targetTab = `#${tab}-assignments`;
+                }
+                
+                console.log('🎯 Activando tab:', targetTab);
+                $(targetTab).addClass('active');
                 
                 // Mostrar/ocultar botón de guardar según el tab
                 if (tab === 'add') {
                     $('#btnGuardarAsignacion').show();
+                    console.log('👁️ Mostrando botón Guardar Asignación');
+                    console.log('🔍 Estado del botón después de mostrar:', {
+                        existe: $('#btnGuardarAsignacion').length,
+                        visible: $('#btnGuardarAsignacion').is(':visible'),
+                        display: $('#btnGuardarAsignacion').css('display')
+                    });
                 } else {
                     $('#btnGuardarAsignacion').hide();
+                    console.log('👁️‍🗨️ Ocultando botón Guardar Asignación');
                 }
             });
         }
@@ -1197,10 +1278,10 @@ if (isset($_GET['logout'])) {
 
             let url, params;
             if (entityType === 'proyecto') {
-                url = '/octocodex/condor/php/asignaciones_proyectos.php';
+                url = 'php/asignaciones_proyectos.php';
                 params = { accion: 'obtener_asignaciones', proyecto_id: entityId };
             } else {
-                url = '/octocodex/condor/php/asignaciones_proyectos.php';
+                url = 'php/asignaciones_proyectos.php';
                 params = { accion: 'obtener_asignaciones_usuario', usuario_id: entityId };
             }
 
@@ -1318,7 +1399,7 @@ if (isset($_GET['logout'])) {
         function cargarSelectoresModal() {
             // Cargar proyectos
             $.ajax({
-                url: '/octocodex/condor/php/abm_proyectos.php',
+                url: '/octocodex/condor/php/listar_proyectos_asignaciones.php',
                 method: 'GET',
                 data: { accion: 'listar' },
                 dataType: 'json',
@@ -1327,16 +1408,17 @@ if (isset($_GET['logout'])) {
                 },
                 crossDomain: false,
                 success: function(response) {
-                    if (response.exito) {
+                    if (response.exito && response.proyectos) {
                         let options = '<option value="">Seleccione un proyecto...</option>';
                         response.proyectos.forEach(proyecto => {
-                            options += `<option value="${proyecto.id}">${proyecto.pr_titulo}</option>`;
+                            options += `<option value="${proyecto.id}">${proyecto.titulo}</option>`;
                         });
                         $('#proyecto-select').html(options);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error al cargar proyectos:', error);
+                    $('#proyecto-select').html('<option value="">Error al cargar proyectos</option>');
                 }
             });
 
@@ -1376,49 +1458,563 @@ if (isset($_GET['logout'])) {
         // Editar asignación
         function editarAsignacion(asignacionId) {
             console.log('Editar asignación:', asignacionId);
-            alert('Funcionalidad en desarrollo: Editar asignación ' + asignacionId);
+            
+            // Obtener datos de la asignación
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'obtener_asignacion_individual', 
+                    asignacion_id: asignacionId 
+                },
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(response) {
+                    if (response.exito && response.asignacion) {
+                        mostrarModalEditarAsignacion(response.asignacion);
+                    } else {
+                        alert('Error: ' + (response.mensaje || 'No se pudo cargar la asignación'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar asignación:', error);
+                    alert('Error al conectar con el servidor');
+                }
+            });
+        }
+        
+        // Mostrar modal para editar asignación
+        function mostrarModalEditarAsignacion(asignacion) {
+            const modalHtml = `
+                <div class="modal fade" id="modalEditarAsignacion" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background: var(--gradiente-violeta); color: white;">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-edit me-2"></i>Editar Asignación
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="formEditarAsignacion">
+                                    <input type="hidden" name="asignacion_id" value="${asignacion.asignacion_id}">
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Proyecto</label>
+                                        <input type="text" class="form-control" value="${asignacion.proyecto_titulo}" readonly>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Usuario</label>
+                                        <input type="text" class="form-control" value="${asignacion.nombre_completo}" readonly>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Rol en el Proyecto</label>
+                                                <select class="form-select" name="rol_proyecto" required>
+                                                    <option value="lider" ${asignacion.rol_proyecto === 'lider' ? 'selected' : ''}>Líder</option>
+                                                    <option value="desarrollador" ${asignacion.rol_proyecto === 'desarrollador' ? 'selected' : ''}>Desarrollador</option>
+                                                    <option value="consultor" ${asignacion.rol_proyecto === 'consultor' ? 'selected' : ''}>Consultor</option>
+                                                    <option value="revisor" ${asignacion.rol_proyecto === 'revisor' ? 'selected' : ''}>Revisor</option>
+                                                    <option value="colaborador" ${asignacion.rol_proyecto === 'colaborador' ? 'selected' : ''}>Colaborador</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Estado</label>
+                                                <select class="form-select" name="estado_asignacion" required>
+                                                    <option value="activo" ${asignacion.estado_asignacion === 'activo' ? 'selected' : ''}>Activo</option>
+                                                    <option value="completado" ${asignacion.estado_asignacion === 'completado' ? 'selected' : ''}>Completado</option>
+                                                    <option value="pausado" ${asignacion.estado_asignacion === 'pausado' ? 'selected' : ''}>Pausado</option>
+                                                    <option value="cancelado" ${asignacion.estado_asignacion === 'cancelado' ? 'selected' : ''}>Cancelado</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Horas Asignadas</label>
+                                                <input type="number" class="form-control" name="horas_asignadas" 
+                                                       value="${asignacion.horas_asignadas}" min="0" step="0.5">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Horas Trabajadas</label>
+                                                <input type="number" class="form-control" name="horas_trabajadas" 
+                                                       value="${asignacion.horas_trabajadas}" min="0" step="0.5">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Fecha Inicio</label>
+                                                <input type="date" class="form-control" name="fecha_inicio" 
+                                                       value="${asignacion.fecha_inicio || ''}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Fecha Fin</label>
+                                                <input type="date" class="form-control" name="fecha_fin" 
+                                                       value="${asignacion.fecha_fin || ''}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Notas</label>
+                                        <textarea class="form-control" name="notas" rows="3" placeholder="Notas adicionales...">${asignacion.notas || ''}</textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="guardarEdicionAsignacion()" 
+                                        style="background: var(--gradiente-violeta); border: none;">
+                                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Eliminar modal anterior si existe
+            $('#modalEditarAsignacion').remove();
+            
+            // Agregar y mostrar el modal
+            $('body').append(modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('modalEditarAsignacion'));
+            modal.show();
+        }
+        
+        // Guardar edición de asignación
+        function guardarEdicionAsignacion() {
+            const formData = new FormData(document.getElementById('formEditarAsignacion'));
+            formData.append('accion', 'actualizar_asignacion');
+
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(response) {
+                    if (response.exito) {
+                        $('#modalEditarAsignacion').modal('hide');
+                        
+                        // Mostrar mensaje de éxito
+                        const alertHtml = `
+                            <div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                                <i class="fas fa-check-circle me-2"></i>
+                                ${response.mensaje || 'Asignación actualizada exitosamente'}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        `;
+                        $('body').append(alertHtml);
+                        setTimeout(() => $('.alert').alert('close'), 3000);
+                        
+                        // Recargar datos
+                        cargarEstadisticasAsignaciones();
+                        
+                        // Recargar tab activo
+                        const activeTab = $('.assignment-tab.active').data('tab');
+                        if (activeTab === 'projects') {
+                            cargarAsignacionesPorProyecto();
+                        } else if (activeTab === 'users') {
+                            cargarAsignacionesPorUsuario();
+                        }
+                        
+                    } else {
+                        alert('Error: ' + (response.mensaje || 'No se pudo actualizar la asignación'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al actualizar asignación:', error);
+                    alert('Error al conectar con el servidor');
+                }
+            });
         }
 
         // Eliminar asignación
         function eliminarAsignacion(asignacionId) {
-            if (confirm('¿Está seguro de que desea eliminar esta asignación?')) {
+            console.log('🗑️ Intentando eliminar asignación ID:', asignacionId);
+            
+            // Usar confirm tradicional por ahora
+            if (confirm('¿Está seguro de que desea eliminar esta asignación?\n\nEsta acción no se puede deshacer.')) {
+                console.log('✅ Confirmación aceptada, procediendo a eliminar...');
+                
                 $.ajax({
-                    url: '/octocodex/condor/php/asignaciones_proyectos.php',
-                    method: 'POST',
-                    data: { 
-                        accion: 'eliminar_asignacion',
-                        asignacion_id: asignacionId
-                    },
-                    dataType: 'json',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    success: function(response) {
-                        if (response.exito) {
-                            alert('Asignación eliminada exitosamente');
-                            // Recargar las asignaciones
-                            cargarAsignacionesModal(window.currentEntityId, window.currentEntityType);
-                            // Actualizar estadísticas
-                            cargarEstadisticasAsignaciones();
-                        } else {
-                            alert('Error: ' + response.mensaje);
+                        url: 'php/asignaciones_proyectos.php',
+                        method: 'POST',
+                        data: { 
+                            accion: 'eliminar_asignacion',
+                            asignacion_id: asignacionId
+                        },
+                        dataType: 'json',
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        crossDomain: false,
+                        success: function(response) {
+                            console.log('📥 Respuesta del servidor para eliminar:', response);
+                            
+                            if (response.exito) {
+                                console.log('✅ Eliminación exitosa');
+                                showMessage('¡Asignación eliminada exitosamente!', 'success', 3000);
+                                
+                                // Recargar las asignaciones
+                                if (window.currentEntityId && window.currentEntityType) {
+                                    cargarAsignacionesModal(window.currentEntityId, window.currentEntityType);
+                                }
+                                
+                                // Actualizar estadísticas
+                                if (typeof cargarEstadisticasAsignaciones === 'function') {
+                                    cargarEstadisticasAsignaciones();
+                                }
+                                
+                                // Recargar el listado principal de proyectos
+                                if (typeof cargarAsignacionesPorProyecto === 'function') {
+                                    cargarAsignacionesPorProyecto();
+                                }
+                            } else {
+                                showMessage('Error al eliminar: ' + response.mensaje, 'error', 4000);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error al eliminar asignación:', error);
+                            showMessage('Error al conectar con el servidor', 'error', 4000);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error al eliminar asignación:', error);
-                        alert('Error al conectar con el servidor');
-                    }
-                });
+                    });
             }
         }
 
-        // Guardar nueva asignación
-        $('#btnGuardarAsignacion').on('click', function() {
+        // Cargar proyectos disponibles en el select
+        function cargarProyectosSelect() {
+            console.log('🔍 Cargando proyectos para select...');
+            
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { accion: 'listar_proyectos' },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.proyectos) {
+                        const select = $('#proyecto-select');
+                        select.html('<option value="">Seleccione un proyecto...</option>');
+                        
+                        response.proyectos.forEach(proyecto => {
+                            const option = `<option value="${proyecto.id}" 
+                                                  data-estado="${proyecto.pr_estado}" 
+                                                  data-prioridad="${proyecto.pr_prioridad}">
+                                                ${proyecto.pr_titulo} (${proyecto.pr_estado})
+                                            </option>`;
+                            select.append(option);
+                        });
+                        
+                        console.log('✅ Proyectos cargados en select:', response.proyectos.length);
+                    } else {
+                        console.error('❌ Error al cargar proyectos:', response.mensaje);
+                        $('#proyecto-select').html('<option value="">Error al cargar proyectos</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Error AJAX al cargar proyectos:', error);
+                    $('#proyecto-select').html('<option value="">Error de conexión</option>');
+                }
+            });
+        }
+
+        // Cargar usuarios disponibles en el select
+        function cargarUsuariosSelect(proyectoId = null) {
+            console.log('🔍 Cargando usuarios para select...');
+            
+            // Si no se proporciona proyecto_id, usar el global
+            if (!proyectoId && window.currentEntityId && window.currentEntityType === 'proyecto') {
+                proyectoId = window.currentEntityId;
+            }
+            
+            // Si aún no hay proyecto_id, cargar todos los usuarios activos
+            if (!proyectoId) {
+                console.log('⚠️ No hay proyecto_id, cargando todos los usuarios activos');
+                cargarTodosLosUsuarios();
+                return;
+            }
+            
+            console.log('📋 Parámetros enviados:', { 
+                accion: 'listar_usuarios_disponibles', 
+                proyecto_id: proyectoId 
+            });
+            
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'listar_usuarios_disponibles',
+                    proyecto_id: proyectoId // Agregar proyecto_id como parámetro
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log('📥 Respuesta de usuarios:', response);
+                    
+                    if (response.exito && response.usuarios) {
+                        const select = $('#usuario-select');
+                        select.html('<option value="">Seleccione un usuario...</option>');
+                        
+                        let usuariosDisponibles = 0;
+                        let usuariosAsignados = 0;
+                        
+                        response.usuarios.forEach(usuario => {
+                            const esDisponible = usuario.estado_asignacion === 'disponible';
+                            let optionClass = '';
+                            let optionText = usuario.nombre_completo;
+                            
+                            if (esDisponible) {
+                                usuariosDisponibles++;
+                                optionText += ` (${usuario.us_email})`;
+                            } else {
+                                usuariosAsignados++;
+                                optionText += ` (${usuario.us_email}) - YA ASIGNADO`;
+                                optionClass = 'style="color: #6c757d; font-style: italic;"';
+                            }
+                            
+                            const option = `<option value="${usuario.id}" 
+                                                  data-email="${usuario.us_email}"
+                                                  data-rol="${usuario.us_rol}"
+                                                  data-estado="${usuario.estado_asignacion}"
+                                                  ${!esDisponible ? 'disabled' : ''}
+                                                  ${optionClass}>
+                                                ${optionText}
+                                            </option>`;
+                            select.append(option);
+                        });
+                        
+                        console.log(`✅ Usuarios cargados - Disponibles: ${usuariosDisponibles}, Ya asignados: ${usuariosAsignados}, Total: ${response.usuarios.length}`);
+                        
+                        // Mostrar información adicional
+                        mostrarInfoUsuarios(usuariosDisponibles, usuariosAsignados);
+                        
+                    } else {
+                        console.error('❌ Error al cargar usuarios:', response.mensaje);
+                        $('#usuario-select').html('<option value="">Error al cargar usuarios</option>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Error AJAX al cargar usuarios:', error);
+                    console.error('❌ Respuesta del servidor:', xhr.responseText);
+                    $('#usuario-select').html('<option value="">Error de conexión</option>');
+                }
+            });
+        }
+
+        // Función alternativa para cargar todos los usuarios (cuando no hay proyecto seleccionado)
+        function cargarTodosLosUsuarios() {
+            console.log('🔄 Cargando todos los usuarios activos...');
+            
+            // Usar la API de asignaciones para obtener usuarios
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { accion: 'listar_usuarios' },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.usuarios) {
+                        const select = $('#usuario-select');
+                        select.html('<option value="">Seleccione un usuario...</option>');
+                        
+                        response.usuarios.forEach(usuario => {
+                            if (usuario.us_activo == 1) {
+                                const option = `<option value="${usuario.id}" 
+                                                      data-email="${usuario.us_email}"
+                                                      data-rol="${usuario.us_rol}">
+                                                    ${usuario.nombre_completo} (${usuario.us_email})
+                                                </option>`;
+                                select.append(option);
+                            }
+                        });
+                        
+                        console.log('✅ Usuarios cargados desde fuente alternativa:', response.usuarios.length);
+                    }
+                },
+                error: function() {
+                    // Si falla, crear usuarios con query SQL directa
+                    console.log('⚠️ Fuente alternativa no disponible, usando endpoint con proyecto_id = null');
+                    cargarUsuariosSinProyecto();
+                }
+            });
+        }
+
+        // Última alternativa: cargar usuarios sin filtrar por proyecto
+        function cargarUsuariosSinProyecto() {
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'listar_usuarios_disponibles',
+                    proyecto_id: '' // Enviar vacío para obtener todos
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.usuarios) {
+                        const select = $('#usuario-select');
+                        select.html('<option value="">Seleccione un usuario...</option>');
+                        
+                        response.usuarios.forEach(usuario => {
+                            const option = `<option value="${usuario.id}" 
+                                                  data-email="${usuario.us_email}"
+                                                  data-rol="${usuario.us_rol}">
+                                                ${usuario.nombre_completo} (${usuario.us_email})
+                                            </option>`;
+                            select.append(option);
+                        });
+                        
+                        console.log('✅ Usuarios cargados sin filtrar:', response.usuarios.length);
+                        
+                        // Mostrar info general
+                        const infoHtml = `
+                            <div id="info-usuarios-disponibles" class="mt-2">
+                                <small class="text-info">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Seleccione un proyecto primero para ver disponibilidad específica
+                                </small>
+                            </div>
+                        `;
+                        $('#usuario-select').closest('.mb-3').append(infoHtml);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Error al cargar usuarios:', error);
+                    $('#usuario-select').html('<option value="">Error al cargar usuarios</option>');
+                }
+            });
+        }
+
+        // Mostrar información sobre usuarios disponibles
+        function mostrarInfoUsuarios(disponibles, asignados) {
+            // Remover info anterior
+            $('#info-usuarios-disponibles').remove();
+            
+            const infoHtml = `
+                <div id="info-usuarios-disponibles" class="mt-2">
+                    <small class="text-muted">
+                        <i class="fas fa-users me-1"></i>
+                        ${disponibles} usuarios disponibles, ${asignados} ya asignados a este proyecto
+                    </small>
+                </div>
+            `;
+            
+            $('#usuario-select').closest('.mb-3').append(infoHtml);
+        }
+
+        // Validar formulario antes de enviar
+        function validarFormularioAsignacion() {
+            const form = document.getElementById('formNuevaAsignacion');
+            const formData = new FormData(form);
+            
+            // Validaciones básicas
+            if (!formData.get('proyecto_id')) {
+                mostrarAlertaFormulario('Debe seleccionar un proyecto', 'error');
+                return false;
+            }
+            
+            if (!formData.get('usuario_id')) {
+                mostrarAlertaFormulario('Debe seleccionar un usuario', 'error');
+                return false;
+            }
+            
+            if (!formData.get('rol_proyecto')) {
+                mostrarAlertaFormulario('Debe seleccionar un rol para el proyecto', 'error');
+                return false;
+            }
+            
+            // Validación de horas (opcional pero si se ingresa debe ser válida)
+            const horas = formData.get('horas_asignadas');
+            if (horas && (isNaN(horas) || parseFloat(horas) < 0)) {
+                mostrarAlertaFormulario('Las horas asignadas deben ser un número válido mayor o igual a 0', 'error');
+                return false;
+            }
+            
+            // Validación de fecha (opcional pero si se ingresa debe ser válida)
+            const fechaInicio = formData.get('fecha_inicio');
+            if (fechaInicio) {
+                const fecha = new Date(fechaInicio);
+                const hoy = new Date();
+                hoy.setHours(0, 0, 0, 0);
+                
+                if (fecha < hoy) {
+                    if (!confirm('La fecha de inicio es anterior a hoy. ¿Desea continuar?')) {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
+
+        // Mostrar alertas en el formulario
+        function mostrarAlertaFormulario(mensaje, tipo) {
+            // Remover alertas existentes
+            $('#add-assignment .alert').remove();
+            
+            const tipoClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
+            const icono = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+            
+            const alerta = `
+                <div class="alert ${tipoClass} alert-dismissible fade show mb-3" role="alert">
+                    <i class="${icono} me-2"></i>
+                    ${mensaje}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            $('#add-assignment form').prepend(alerta);
+        }
+
+        // Guardar nueva asignación (mejorada)
+        $(document).on('click', '#btnGuardarAsignacion', function() {
+            console.log('🔥 ¡CLIC EN BOTÓN DETECTADO!');
+            console.log('💾 Intentando guardar nueva asignación...');
+            console.log('📊 Estado del botón:', {
+                existe: $('#btnGuardarAsignacion').length > 0,
+                visible: $('#btnGuardarAsignacion').is(':visible'),
+                deshabilitado: $('#btnGuardarAsignacion').prop('disabled')
+            });
+            
+            // Validar formulario
+            if (!validarFormularioAsignacion()) {
+                return;
+            }
+            
+            // Deshabilitar botón para evitar doble envío
+            const btn = $(this);
+            const textoOriginal = btn.html();
+            btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
+            
             const formData = new FormData(document.getElementById('formNuevaAsignacion'));
             formData.append('accion', 'asignar_usuario');
+            
+            // Log de datos a enviar
+            console.log('📋 Datos a enviar:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`  ${key}: ${value}`);
+            }
 
             $.ajax({
-                url: '/octocodex/condor/php/asignaciones_proyectos.php',
+                url: 'php/asignaciones_proyectos.php',
                 method: 'POST',
                 data: formData,
                 processData: false,
@@ -1429,29 +2025,302 @@ if (isset($_GET['logout'])) {
                 },
                 crossDomain: false,
                 success: function(response) {
+                    console.log('📥 Respuesta del servidor:', response);
+                    
                     if (response.exito) {
-                        alert('Asignación creada exitosamente');
-                        // Limpiar formulario
-                        document.getElementById('formNuevaAsignacion').reset();
-                        // Cambiar al tab de asignaciones actuales
-                        $('.modal-tab[data-tab="current"]').click();
-                        // Recargar las asignaciones
-                        cargarAsignacionesModal(window.currentEntityId, window.currentEntityType);
-                        // Actualizar estadísticas
-                        cargarEstadisticasAsignaciones();
+                        mostrarAlertaFormulario('¡Asignación creada exitosamente!', 'success');
+                        
+                        // Mostrar mensaje de éxito global
+                        showMessage('¡Usuario asignado exitosamente al proyecto!', 'success', 3000);
+                        
+                        // Limpiar formulario después de 2 segundos
+                        setTimeout(() => {
+                            document.getElementById('formNuevaAsignacion').reset();
+                            $('#add-assignment .alert').remove();
+                            
+                            // Cambiar al tab de asignaciones actuales
+                            $('.modal-tab[data-tab="current"]').click();
+                            
+                            // Recargar las asignaciones
+                            if (window.currentEntityId && window.currentEntityType) {
+                                cargarAsignacionesModal(window.currentEntityId, window.currentEntityType);
+                            }
+                            
+                            // Actualizar estadísticas si existe la función
+                            if (typeof cargarEstadisticasAsignaciones === 'function') {
+                                cargarEstadisticasAsignaciones();
+                            }
+                            
+                            // Recargar el listado principal de proyectos con asignaciones
+                            if (typeof cargarAsignacionesPorProyecto === 'function') {
+                                console.log('🔄 Recargando listado de proyectos con asignaciones...');
+                                cargarAsignacionesPorProyecto();
+                            }
+                        }, 2000);
+                        
                     } else {
-                        alert('Error: ' + response.mensaje);
+                        mostrarAlertaFormulario('Error: ' + response.mensaje, 'error');
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error al crear asignación:', error);
-                    alert('Error al conectar con el servidor');
+                    console.error('❌ Error AJAX completo:', {xhr: xhr, status: status, error: error});
+                    console.error('❌ Texto de respuesta:', xhr.responseText);
+                    
+                    let mensajeError = 'Error al conectar con el servidor';
+                    if (xhr.status === 404) {
+                        mensajeError = 'Archivo PHP no encontrado. Verifica la ruta del servidor.';
+                    } else if (xhr.status === 500) {
+                        mensajeError = 'Error interno del servidor. Revisa los logs del servidor.';
+                    } else if (xhr.responseText) {
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            mensajeError = errorResponse.mensaje || mensajeError;
+                        } catch (e) {
+                            mensajeError = 'Error del servidor: ' + xhr.responseText.substring(0, 100);
+                        }
+                    }
+                    
+                    mostrarAlertaFormulario(mensajeError, 'error');
+                },
+                complete: function() {
+                    // Rehabilitar botón
+                    btn.prop('disabled', false).html(textoOriginal);
                 }
             });
         });
 
+        // Mostrar información adicional del proyecto seleccionado
+        $(document).on('change', '#proyecto-select', function() {
+            const proyectoId = $(this).val();
+            const selectedOption = $(this).find('option:selected');
+            
+            // Remover info anterior
+            $('#proyecto-info, #info-usuarios-disponibles').remove();
+            
+            if (proyectoId) {
+                const estado = selectedOption.data('estado');
+                const cliente = selectedOption.data('cliente');
+                
+                const infoHtml = `
+                    <div id="proyecto-info" class="alert alert-info mt-2 mb-0">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <div>
+                                <strong>Cliente:</strong> ${cliente} <br>
+                                <strong>Estado:</strong> ${estado.replace('_', ' ')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('#proyecto-select').closest('.mb-3').append(infoHtml);
+                
+                // Recargar usuarios cuando cambia el proyecto
+                console.log('🔄 Recargando usuarios para proyecto:', proyectoId);
+                cargarUsuariosSelect(proyectoId);
+            }
+        });
+
+        // Mostrar información adicional del usuario seleccionado
+        $(document).on('change', '#usuario-select', function() {
+            const usuarioId = $(this).val();
+            const selectedOption = $(this).find('option:selected');
+            
+            // Remover info anterior
+            $('#usuario-info').remove();
+            
+            if (usuarioId) {
+                const email = selectedOption.data('email');
+                const rol = selectedOption.data('rol');
+                
+                const infoHtml = `
+                    <div id="usuario-info" class="alert alert-info mt-2 mb-0">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <div>
+                                <strong>Email:</strong> ${email} <br>
+                                <strong>Rol:</strong> ${rol}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('#usuario-select').closest('.mb-3').append(infoHtml);
+                
+                // Verificar si el usuario ya está asignado a este proyecto
+                verificarAsignacionExistente(usuarioId, $('#proyecto-select').val());
+            }
+        });
+
+        // Verificar si ya existe una asignación entre usuario y proyecto
+        function verificarAsignacionExistente(usuarioId, proyectoId) {
+            if (!usuarioId || !proyectoId) return;
+            
+            // Remover alerta anterior
+            $('#alerta-asignacion-existente').remove();
+            
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'verificar_asignacion_existente',
+                    usuario_id: usuarioId,
+                    proyecto_id: proyectoId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.datos && response.datos.existe) {
+                        const alertaHtml = `
+                            <div id="alerta-asignacion-existente" class="alert alert-warning mt-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>¡Atención!</strong> Este usuario ya está asignado a este proyecto con el rol: <strong>${response.datos.asignacion.rol_proyecto}</strong>
+                                ${response.datos.asignacion.estado_asignacion !== 'activo' ? `(Estado: ${response.datos.asignacion.estado_asignacion})` : ''}
+                            </div>
+                        `;
+                        
+                        $('#add-assignment form').append(alertaHtml);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('No se pudo verificar asignación existente:', error);
+                }
+            });
+        }
+
+        // Sugerencias de rol basado en el proyecto seleccionado
+        $(document).on('change', '#proyecto-select', function() {
+            const proyectoId = $(this).val();
+            const selectedOption = $(this).find('option:selected');
+            
+            if (proyectoId) {
+                // Obtener información sobre roles existentes en el proyecto
+                obtenerRolesSugeridos(proyectoId);
+            }
+        });
+
+        function obtenerRolesSugeridos(proyectoId) {
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'obtener_roles_proyecto',
+                    proyecto_id: proyectoId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.datos && response.datos.roles_asignados) {
+                        const rolesActuales = response.datos.roles_asignados.map(rol => rol.rol_proyecto);
+                        mostrarSugerenciasRol(rolesActuales);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('No se pudieron obtener sugerencias de rol:', error);
+                }
+            });
+        }
+
+        function mostrarSugerenciasRol(rolesExistentes) {
+            // Remover sugerencias anteriores
+            $('#sugerencias-rol').remove();
+            
+            const rolSelect = $('select[name="rol_proyecto"]');
+            let sugerenciasHtml = '';
+            
+            if (rolesExistentes.length > 0) {
+                sugerenciasHtml = `
+                    <div id="sugerencias-rol" class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            Roles ya asignados en este proyecto: ${rolesExistentes.join(', ')}
+                        </small>
+                    </div>
+                `;
+            } else {
+                sugerenciasHtml = `
+                    <div id="sugerencias-rol" class="mt-2">
+                        <small class="text-success">
+                            <i class="fas fa-star me-1"></i>
+                            Este proyecto no tiene asignaciones aún. ¡Perfecto momento para asignar un líder!
+                        </small>
+                    </div>
+                `;
+            }
+            
+            rolSelect.closest('.mb-3').append(sugerenciasHtml);
+        }
+
+        // Limpiar formulario completamente cuando se cambia de tab
+        $(document).on('click', '.modal-tab[data-tab="add"]', function() {
+            console.log('🆕 Cambiando a tab "Nueva Asignación"');
+            
+            // Limpiar formulario
+            if (document.getElementById('formNuevaAsignacion')) {
+                document.getElementById('formNuevaAsignacion').reset();
+                console.log('✅ Formulario reseteado');
+            }
+            
+            // Remover todas las alertas e información adicional
+            $('#proyecto-info, #usuario-info, #alerta-asignacion-existente, #sugerencias-rol').remove();
+            $('#add-assignment .alert').remove();
+            
+            // Cargar datos frescos
+            console.log('🔄 Cargando datos frescos para selects...');
+            cargarProyectosSelect();
+            cargarUsuariosSelect(window.currentEntityId);
+            
+            console.log('✅ Tab "Nueva Asignación" preparado');
+        });
+
+        // Cargar datos cuando se abre el modal de asignaciones
+        $(document).on('shown.bs.modal', '#modalGestionAsignaciones', function () {
+            console.log('🎭 Modal de asignaciones abierto, inicializando...');
+            
+            // Asegurar que los tabs estén configurados correctamente
+            setupModalNavigation();
+            
+            // Verificar que el tab actual esté activo
+            if (!$('.modal-tab.active').length) {
+                console.log('⚠️ No hay tab activo, activando tab "current"');
+                $('.modal-tab[data-tab="current"]').click();
+            }
+            
+            // Cargar datos para el formulario de nueva asignación
+            cargarProyectosSelect();
+            cargarUsuariosSelect(window.currentEntityId);
+            
+            console.log('✅ Modal inicializado correctamente');
+        });
+
+        // Refrescar asignaciones cuando se cierra el modal
+        $(document).on('hidden.bs.modal', '#modalGestionAsignaciones', function () {
+            console.log('🔄 Modal de asignaciones cerrado, refrescando datos...');
+            
+            // Recargar la tabla de asignaciones por proyecto si existe
+            if (typeof cargarAsignacionesPorProyecto === 'function') {
+                cargarAsignacionesPorProyecto();
+            }
+            
+            // Recargar estadísticas si existe la función
+            if (typeof cargarEstadisticasAsignaciones === 'function') {
+                cargarEstadisticasAsignaciones();
+            }
+            
+            // Si estamos en la vista de proyectos, recargar la tabla
+            if (window.location.hash === '#proyectos' || $('.assignments-container').length > 0) {
+                console.log('🔄 Refrescando vista de proyectos...');
+                setTimeout(() => {
+                    if (typeof cargarAsignacionesPorProyecto === 'function') {
+                        cargarAsignacionesPorProyecto();
+                    }
+                }, 500);
+            }
+            
+            console.log('✅ Refresco completado');
+        });
+
         // Inicializar eventos del modal
         $(document).ready(function() {
+            console.log('🔧 Configurando navegación del modal...');
             setupModalNavigation();
         });
 
@@ -1462,7 +2331,25 @@ if (isset($_GET['logout'])) {
         });
 
         // Script para el dashboard
-        console.log('Dashboard cargado correctamente');
+        console.log('🎯 === DASHBOARD INICIANDO ===');
+        console.log('✅ Dashboard cargado correctamente');
+        
+        // Test de funciones principales
+        console.log('🔍 Verificando funciones principales:', {
+            cargarAsignacionesPorProyecto: typeof cargarAsignacionesPorProyecto,
+            eliminarAsignacion: typeof eliminarAsignacion,
+            setupModalNavigation: typeof setupModalNavigation
+        });
+        
+        // Intentar cargar asignaciones manualmente después de 1 segundo
+        setTimeout(function() {
+            console.log('⏰ Trigger manual de carga de asignaciones...');
+            if (typeof cargarAsignacionesPorProyecto === 'function') {
+                cargarAsignacionesPorProyecto();
+            } else {
+                console.error('❌ cargarAsignacionesPorProyecto no está definida');
+            }
+        }, 1000);
         // Cargar el contenido de construccion.php en el div construccion
         $(document).ready(function() {
             $.ajax({
@@ -1518,7 +2405,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordActual" name="passwordActual" class="form-control" 
                                     placeholder="Ingrese su contraseña actual" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordActual">
-                                    <i class="fas fa-eye"></i>
+                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordActual" style="display: none;">
@@ -1537,7 +2424,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordNueva" name="passwordNueva" class="form-control" 
                                     placeholder="Ingrese la nueva contraseña (mínimo 6 caracteres)" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordNueva">
-                                    <i class="fas fa-eye"></i>
+                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordNueva" style="display: none;">
@@ -1556,7 +2443,7 @@ if (isset($_GET['logout'])) {
                                 <input type="password" id="passwordConfirmar" name="passwordConfirmar" class="form-control" 
                                     placeholder="Confirme la nueva contraseña" required>
                                 <button type="button" class="btn btn-outline-secondary toggle-password" data-target="passwordConfirmar">
-                                    <i class="fas fa-eye"></i>
+                                    <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta">
                                 </button>
                             </div>
                             <div class="error-message" id="error-passwordConfirmar" style="display: none;">
@@ -1657,53 +2544,73 @@ if (isset($_GET['logout'])) {
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Proyecto</label>
+                                            <label for="proyecto-select" class="form-label">Proyecto</label>
                                             <select class="form-select" id="proyecto-select" name="proyecto_id" required>
                                                 <option value="">Seleccione un proyecto...</option>
                                             </select>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Solo se muestran proyectos activos
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Usuario</label>
+                                            <label for="usuario-select" class="form-label">Usuario</label>
                                             <select class="form-select" id="usuario-select" name="usuario_id" required>
                                                 <option value="">Seleccione un usuario...</option>
                                             </select>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Solo se muestran usuarios activos
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Rol en el Proyecto</label>
-                                            <select class="form-select" name="rol_proyecto" required>
+                                            <label for="rol-proyecto-select" class="form-label">Rol en el Proyecto</label>
+                                            <select class="form-select" id="rol-proyecto-select" name="rol_proyecto" required>
                                                 <option value="">Seleccione un rol...</option>
-                                                <option value="lider">Líder</option>
-                                                <option value="desarrollador">Desarrollador</option>
-                                                <option value="consultor">Consultor</option>
-                                                <option value="revisor">Revisor</option>
-                                                <option value="colaborador">Colaborador</option>
+                                                <option value="lider">🔶 Líder</option>
+                                                <option value="desarrollador">💻 Desarrollador</option>
+                                                <option value="consultor">🎯 Consultor</option>
+                                                <option value="revisor">🔍 Revisor</option>
+                                                <option value="colaborador">🤝 Colaborador</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Horas Asignadas</label>
-                                            <input type="number" class="form-control" name="horas_asignadas" min="0" step="0.5" placeholder="Ej: 40">
+                                            <label for="horas-asignadas" class="form-label">Horas Asignadas</label>
+                                            <input type="number" class="form-control" id="horas-asignadas" name="horas_asignadas" min="0" step="0.5" placeholder="Ej: 40">
+                                            <div class="form-text">
+                                                <i class="fas fa-clock me-1"></i>
+                                                Campo opcional. Ej: 40 (horas por semana)
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Fecha de Inicio</label>
-                                            <input type="date" class="form-control" name="fecha_inicio">
+                                            <label for="fecha-inicio" class="form-label">Fecha de Inicio</label>
+                                            <input type="date" class="form-control" id="fecha-inicio" name="fecha_inicio">
+                                            <div class="form-text">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Campo opcional. Por defecto: fecha actual
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label">Notas</label>
-                                            <textarea class="form-control" name="notas" rows="3" placeholder="Notas adicionales sobre la asignación"></textarea>
+                                            <label for="notas" class="form-label">Notas</label>
+                                            <textarea class="form-control" id="notas" name="notas" rows="3" placeholder="Notas adicionales sobre la asignación"></textarea>
+                                            <div class="form-text">
+                                                <i class="fas fa-edit me-1"></i>
+                                                Campo opcional para comentarios adicionales
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1832,6 +2739,177 @@ if (isset($_GET['logout'])) {
             display: flex;
             align-items: center;
             gap: 5px;
+        }
+
+        /* ===== ESTILOS PARA FORMULARIO DE NUEVA ASIGNACIÓN ===== */
+        #formNuevaAsignacion .form-select:focus,
+        #formNuevaAsignacion .form-control:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            outline: none;
+        }
+
+        #formNuevaAsignacion .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        #formNuevaAsignacion .form-select,
+        #formNuevaAsignacion .form-control {
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        #formNuevaAsignacion .form-select:hover,
+        #formNuevaAsignacion .form-control:hover {
+            border-color: #8b5cf6;
+        }
+
+        #formNuevaAsignacion .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #formNuevaAsignacion .alert-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        #formNuevaAsignacion .alert-success {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border-left: 4px solid #22c55e;
+        }
+
+        #formNuevaAsignacion .alert-warning {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #d97706;
+            border-left: 4px solid #f59e0b;
+        }
+
+        #formNuevaAsignacion .alert-danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
+            border-left: 4px solid #ef4444;
+        }
+
+        #btnGuardarAsignacion {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #8b5cf6 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        #btnGuardarAsignacion:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        #btnGuardarAsignacion:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #formNuevaAsignacion input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        #formNuevaAsignacion input[type="number"]::-webkit-outer-spin-button,
+        #formNuevaAsignacion input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Animaciones para las alertas informativas */
+        #proyecto-info, #usuario-info, #sugerencias-rol, #alerta-asignacion-existente {
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mejorar apariencia de los selects */
+        #formNuevaAsignacion .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 16px 12px;
+        }
+
+        /* Indicador de campo requerido */
+        #formNuevaAsignacion .form-label[for]:after {
+            content: " *";
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        #formNuevaAsignacion .form-label:not([for]):after {
+            content: "";
+        }
+
+        /* ===== ESTILOS PARA NAVEGACIÓN DE TABS ===== */
+        .tab-pane {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .modal-tab {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            margin: 0;
+            border-radius: 0;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .modal-tab:hover {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6 !important;
+        }
+
+        .modal-tab.active {
+            background-color: white;
+            color: #8b5cf6 !important;
+            border-bottom: 3px solid #8b5cf6;
+        }
+
+        /* Mejorar la apariencia del botón Guardar Asignación */
+        #btnGuardarAsignacion {
+            /* Controlado por JavaScript, no por CSS */
+        }
+
+        /* Animación para el cambio de tabs */
+        .tab-pane {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .tab-pane.active {
+            opacity: 1;
         }
 
         #modalCambiarPassword .toggle-password {

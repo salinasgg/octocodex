@@ -7,7 +7,7 @@
  * Soporta operaciones CRUD y consultas especializadas
  */
 
-require_once 'config_bd.php';
+require_once '../../php/config_bd.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -99,6 +99,14 @@ function procesarAccion() {
             
         case 'verificar_asignacion_existente':
             verificarAsignacionExistente();
+            break;
+            
+        case 'listar_proyectos':
+            listarProyectos();
+            break;
+            
+        case 'listar_usuarios':
+            listarUsuarios();
             break;
             
         default:
@@ -396,22 +404,57 @@ function actualizarAsignacion() {
 function eliminarAsignacion() {
     global $pdo;
     
+    // Debug log
+    error_log("=== ELIMINAR ASIGNACIÓN ===");
+    error_log("POST data: " . print_r($_POST, true));
+    
     $asignacion_id = $_POST['asignacion_id'] ?? null;
     
+    error_log("Asignacion ID recibido: " . $asignacion_id);
+    
     if (!$asignacion_id) {
+        error_log("ERROR: ID de asignación requerido");
         throw new Exception('ID de asignación requerido');
     }
     
+    // Verificar que la asignación existe antes de eliminar
+    $check_sql = "SELECT id, usuario_id, proyecto_id FROM asignaciones_proyectos WHERE id = :asignacion_id";
+    $check_stmt = $pdo->prepare($check_sql);
+    $check_stmt->bindParam(':asignacion_id', $asignacion_id, PDO::PARAM_INT);
+    $check_stmt->execute();
+    
+    $asignacion = $check_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$asignacion) {
+        error_log("ERROR: Asignación con ID $asignacion_id no encontrada");
+        throw new Exception('Asignación no encontrada');
+    }
+    
+    error_log("Asignación encontrada: " . print_r($asignacion, true));
+    
+    // Proceder con la eliminación
     $sql = "DELETE FROM asignaciones_proyectos WHERE id = :asignacion_id";
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':asignacion_id', $asignacion_id, PDO::PARAM_INT);
     
     if ($stmt->execute()) {
-        echo json_encode([
-            'exito' => true,
-            'mensaje' => 'Asignación eliminada exitosamente'
-        ]);
+        $rowsAffected = $stmt->rowCount();
+        error_log("Filas afectadas: " . $rowsAffected);
+        
+        if ($rowsAffected > 0) {
+            error_log("✅ Asignación eliminada exitosamente");
+            echo json_encode([
+                'exito' => true,
+                'mensaje' => 'Asignación eliminada exitosamente',
+                'eliminada' => $asignacion,
+                'filas_afectadas' => $rowsAffected
+            ]);
+        } else {
+            error_log("⚠️ No se eliminó ninguna fila");
+            throw new Exception('No se pudo eliminar la asignación');
+        }
     } else {
+        error_log("ERROR en execute(): " . print_r($stmt->errorInfo(), true));
         throw new Exception('Error al eliminar la asignación');
     }
 }
@@ -811,6 +854,65 @@ function verificarAsignacionExistente() {
     echo json_encode([
         'exito' => true,
         'datos' => $respuesta
+    ]);
+}
+
+/**
+ * Listar todos los proyectos
+ */
+function listarProyectos() {
+    global $pdo;
+    
+    $sql = "SELECT 
+                id,
+                pr_titulo,
+                pr_descripcion,
+                pr_estado,
+                pr_prioridad,
+                pr_fecha_inicio,
+                pr_fecha_estimada
+            FROM proyectos 
+            ORDER BY pr_fecha_inicio DESC, pr_titulo";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    
+    $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo json_encode([
+        'exito' => true,
+        'proyectos' => $proyectos,
+        'total' => count($proyectos)
+    ]);
+}
+
+/**
+ * Listar todos los usuarios activos
+ */
+function listarUsuarios() {
+    global $pdo;
+    
+    $sql = "SELECT 
+                id,
+                us_nombre,
+                us_apellido,
+                us_email,
+                us_rol,
+                us_foto_perfil,
+                CONCAT(us_nombre, ' ', us_apellido) as nombre_completo
+            FROM usuarios 
+            WHERE us_activo = 1
+            ORDER BY us_nombre, us_apellido";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    
+    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo json_encode([
+        'exito' => true,
+        'usuarios' => $usuarios,
+        'total' => count($usuarios)
     ]);
 }
 

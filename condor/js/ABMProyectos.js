@@ -9,6 +9,21 @@ let proyectos = [];
 let clientes = [];
 let draggedProject = null;
 
+/**
+ * Función helper para determinar la URL base correcta según el contexto
+ */
+function getBaseUrl() {
+    const pathname = window.location.pathname;
+    
+    if (pathname.includes('/admin/')) {
+        return '../php/';
+    } else if (pathname.includes('/condor/')) {
+        return 'php/';
+    } else {
+        return 'php/';
+    }
+}
+
 // ==================== FUNCIONES DE INICIALIZACIÓN ====================
 
 // Función para cargar proyectos desde el dashboard (evita conflictos con navbar)
@@ -55,7 +70,7 @@ $(document).ready(function() {
  */
 function cargarProyectos() {
     // Determinar la ruta correcta según el contexto
-    const baseUrl = window.location.pathname.includes('/admin/') ? '../php/' : 'php/';
+    const baseUrl = getBaseUrl();
     
     console.log('🔍 Cargando proyectos desde:', baseUrl + 'abm_proyectos.php');
     
@@ -86,7 +101,7 @@ function cargarProyectos() {
  */
 function cargarClientes() {
     // Determinar la ruta correcta según el contexto
-    const baseUrl = window.location.pathname.includes('/admin/') ? '../php/' : 'php/';
+    const baseUrl = getBaseUrl();
     
     $.ajax({
         url: baseUrl + 'abm_proyectos.php',
@@ -220,7 +235,7 @@ function crearTarjetaProyecto(proyecto) {
                         <i class="fas fa-edit me-2"></i>Editar
                     </a></li>
                     <li><a class="dropdown-item" href="#" onclick="verDetalleProyecto(${proyecto.id}); event.preventDefault();">
-                        <i class="fas fa-eye me-2"></i>Ver Detalle
+                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Ver Detalle
                     </a></li>
                     <li><a class="dropdown-item" href="#" onclick="duplicarProyecto(${proyecto.id}); event.preventDefault();">
                         <i class="fas fa-copy me-2"></i>Duplicar
@@ -401,7 +416,7 @@ function configurarDragAndDrop() {
  */
 function cambiarEstadoProyecto(proyectoId, nuevoEstado) {
     // Determinar la ruta correcta según el contexto
-    const baseUrl = window.location.pathname.includes('/admin/') ? '../php/' : 'php/';
+    const baseUrl = getBaseUrl();
     
     $.ajax({
         url: baseUrl + 'abm_proyectos.php',
@@ -514,7 +529,7 @@ function guardarProyecto() {
     }
     
     // Determinar la ruta correcta según el contexto
-    const baseUrl = window.location.pathname.includes('/admin/') ? '../php/' : 'php/';
+    const baseUrl = getBaseUrl();
     
     console.log('🔍 Guardando proyecto en:', baseUrl + 'abm_proyectos.php');
     console.log('📤 Datos del formulario:', Object.fromEntries(formData));
@@ -580,7 +595,7 @@ function eliminarProyecto(id) {
     }
     mostrarConfirmacionEliminar(`¿Está seguro de eliminar el proyecto "${proyecto.pr_titulo}"?`, function() {
         // Determinar la ruta correcta según el contexto
-        const baseUrl = window.location.pathname.includes('/admin/') ? '../php/' : 'php/';
+        const baseUrl = getBaseUrl();
         
         console.log('🔍 Eliminando proyecto desde:', baseUrl + 'abm_proyectos.php');
         console.log('📤 ID del proyecto:', proyectoId);
@@ -658,9 +673,39 @@ function verDetalleProyecto(id) {
     }
     
     try {
+        // Verificar que el modal existe antes de intentar usarlo
+        const modalElement = document.getElementById('modalDetalleProyecto');
+        if (!modalElement) {
+            console.error('❌ Modal modalDetalleProyecto no encontrado en el DOM');
+            mostrarAlerta('Error: Modal de detalle no disponible. Recarga la página.', 'error');
+            return;
+        }
+        
+        // Verificar elementos críticos del modal
+        const elementosCriticos = [
+            'modalDetalleTitle', 'detalle-titulo', 'detalle-descripcion', 
+            'detalle-cliente', 'detalle-estado', 'detalle-progreso', 
+            'detalle-progress-bar', 'detalle-fecha-inicio', 'detalle-fecha-estimada',
+            'detalle-estado-plazo', 'detalle-prioridad', 'detalle-presupuesto',
+            'detalle-id', 'detalle-tareas', 'detalle-actualizacion', 'detalle-fecha-creacion'
+        ];
+        
+        const elementosFaltantes = [];
+        elementosCriticos.forEach(elementoId => {
+            if (!document.getElementById(elementoId)) {
+                elementosFaltantes.push(elementoId);
+            }
+        });
+        
+        if (elementosFaltantes.length > 0) {
+            console.error('❌ Elementos faltantes en modal:', elementosFaltantes);
+            mostrarAlerta('Error: Modal de detalle incompleto. Elementos faltantes: ' + elementosFaltantes.join(', '), 'error');
+            return;
+        }
+        
         // Actualizar título del modal
         document.getElementById('modalDetalleTitle').innerHTML = 
-            `<i class="fas fa-eye me-2"></i>Detalle del Proyecto: ${proyecto.pr_titulo}`;
+            `<img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Detalle del Proyecto: ${proyecto.pr_titulo}`;
         
         // Llenar información general
         document.getElementById('detalle-titulo').textContent = proyecto.pr_titulo;
@@ -673,7 +718,7 @@ function verDetalleProyecto(id) {
         estadoBadge.className = `badge fs-6 ${getEstadoBadgeClass(proyecto.pr_estado)}`;
         
         // Progreso
-        const progreso = parseInt(proyecto.pr_progreso);
+        const progreso = parseInt(proyecto.pr_progreso) || 0;
         document.getElementById('detalle-progreso').textContent = `${progreso}%`;
         document.getElementById('detalle-progress-bar').style.width = `${progreso}%`;
         
@@ -738,13 +783,14 @@ function verDetalleProyecto(id) {
         // Almacenar ID para las acciones
         window.currentProjectDetailId = proyecto.id;
         
-        // Mostrar modal
-        const modal = new bootstrap.Modal(document.getElementById('modalDetalleProyecto'));
+        // Mostrar modal con verificación adicional
+        const modal = new bootstrap.Modal(modalElement);
         modal.show();
         console.log('✅ Modal de detalle abierto correctamente');
         
     } catch (error) {
         console.error('❌ Error al abrir modal de detalle:', error);
+        console.error('Stack trace:', error.stack);
         mostrarAlerta('Error al mostrar el detalle del proyecto: ' + error.message, 'error');
     }
 }
@@ -1126,8 +1172,11 @@ function abrirModalAsignarUsuario() {
 function cargarUsuariosDisponibles(proyectoId) {
     console.log('🔍 Cargando usuarios disponibles para proyecto:', proyectoId);
     
+    // Determinar la ruta correcta según el contexto
+    const baseUrl = getBaseUrl();
+    
     $.ajax({
-        url: 'php/asignaciones_proyectos.php',
+        url: baseUrl + 'asignaciones_proyectos.php',
         method: 'GET',
         data: {
             accion: 'listar_usuarios_disponibles',
@@ -1190,9 +1239,24 @@ function confirmarAsignacion() {
     }
     
     console.log('🔧 Asignando usuario al proyecto...');
+    console.log('Datos a enviar:', {
+        proyecto_id: proyectoId,
+        usuario_id: usuarioId,
+        rol_proyecto: rolProyecto,
+        horas_asignadas: horasAsignadas,
+        fecha_inicio: fechaInicio,
+        notas: notas
+    });
+    
+    // Determinar la ruta correcta según el contexto
+    const baseUrl = getBaseUrl();
+    
+    console.log('Pathname:', window.location.pathname);
+    console.log('Base URL calculada:', baseUrl);
+    console.log('URL de destino:', baseUrl + 'asignaciones_proyectos.php');
     
     $.ajax({
-        url: 'php/asignaciones_proyectos.php',
+        url: baseUrl + 'asignaciones_proyectos.php',
         method: 'POST',
         data: {
             accion: 'asignar_usuario',
@@ -1238,8 +1302,11 @@ function cargarAsignacionesProyecto(proyectoId) {
     
     console.log('🔍 Cargando asignaciones del proyecto:', proyectoId);
     
+    // Determinar la ruta correcta según el contexto
+    const baseUrl = getBaseUrl();
+    
     $.ajax({
-        url: 'php/asignaciones_proyectos.php',
+        url: baseUrl + 'asignaciones_proyectos.php',
         method: 'GET',
         data: {
             accion: 'obtener_asignaciones',
@@ -1252,10 +1319,32 @@ function cargarAsignacionesProyecto(proyectoId) {
                 console.log('✅ Asignaciones cargadas:', response.asignaciones.length);
             } else {
                 console.error('❌ Error al cargar asignaciones:', response.mensaje);
+                // Mostrar mensaje informativo en el modal
+                const container = document.getElementById('lista-asignaciones');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
+                            <p class="mb-0">Error al cargar asignaciones</p>
+                            <small>${response.mensaje}</small>
+                        </div>`;
+                }
             }
         },
         error: function(xhr, status, error) {
             console.error('❌ Error en petición de asignaciones:', error);
+            console.error('Status:', status, 'XHR:', xhr);
+            
+            // Mostrar mensaje de error en el modal
+            const container = document.getElementById('lista-asignaciones');
+            if (container) {
+                container.innerHTML = `
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-wifi fa-2x mb-2 text-danger"></i>
+                        <p class="mb-0">Error de conexión</p>
+                        <small>No se pudieron cargar las asignaciones</small>
+                    </div>`;
+            }
         }
     });
 }
@@ -1385,8 +1474,11 @@ function getRolDisplayName(rol) {
  */
 function eliminarAsignacion(asignacionId) {
     mostrarConfirmacionEliminar('¿Está seguro de eliminar esta asignación?', function() {
+        // Determinar la ruta correcta según el contexto
+        const baseUrl = getBaseUrl();
+        
         $.ajax({
-            url: 'php/asignaciones_proyectos.php',
+            url: baseUrl + 'asignaciones_proyectos.php',
             method: 'POST',
             data: {
                 accion: 'eliminar_asignacion',
@@ -1532,5 +1624,419 @@ window.abrirModalAsignarUsuario = abrirModalAsignarUsuario;
 window.confirmarAsignacion = confirmarAsignacion;
 window.cargarAsignacionesProyecto = cargarAsignacionesProyecto;
 window.eliminarAsignacion = eliminarAsignacion;
+
+/**
+ * Ver detalle de proyecto desde contexto de asignaciones
+ * Esta función carga los datos del proyecto y abre el modal desde cualquier contexto
+ */
+function verDetalleProyectoDesdeAsignaciones(proyectoId) {
+    console.log('🔧 Abriendo detalle de proyecto desde asignaciones:', proyectoId);
+    
+    // Verificar si el modal existe en el DOM actual
+    let modalElement = document.getElementById('modalDetalleProyecto');
+    console.log('🔍 Modal existente encontrado:', !!modalElement);
+    
+    if (!modalElement) {
+        console.log('⚠️ Modal no encontrado, creando modal dinámico...');
+        try {
+            crearModalDetalleProyectoDinamico();
+            modalElement = document.getElementById('modalDetalleProyecto');
+            console.log('✅ Modal dinámico creado:', !!modalElement);
+        } catch (error) {
+            console.error('❌ Error al crear modal dinámico:', error);
+            alert('Error al crear modal: ' + error.message);
+            return;
+        }
+    }
+    
+    // Determinar la ruta correcta según el contexto
+    const baseUrl = getBaseUrl();
+    const fullUrl = baseUrl + 'abm_proyectos.php';
+    console.log('🌐 URL para AJAX:', fullUrl);
+    console.log('📋 Datos enviados:', { accion: 'obtener', id: proyectoId });
+    
+    // Cargar datos específicos del proyecto
+    $.ajax({
+        url: fullUrl,
+        method: 'GET',
+        data: { 
+            accion: 'obtener', 
+            id: proyectoId 
+        },
+        dataType: 'json',
+        beforeSend: function() {
+            console.log('📡 Enviando petición AJAX...');
+        },
+        success: function(response) {
+            console.log('📥 Respuesta recibida:', response);
+            
+            if (response.exito && response.proyecto) {
+                const proyecto = response.proyecto;
+                console.log('✅ Proyecto cargado exitosamente:', proyecto.pr_titulo);
+                console.log('📊 Datos del proyecto:', proyecto);
+                
+                // Agregar temporalmente a la lista global si no existe
+                const proyectoExistente = proyectos.find(p => p.id == proyectoId);
+                if (!proyectoExistente) {
+                    console.log('➕ Agregando proyecto a lista global...');
+                    proyectos.push(proyecto);
+                } else {
+                    console.log('♻️ Actualizando proyecto existente en lista global...');
+                    const index = proyectos.findIndex(p => p.id == proyectoId);
+                    proyectos[index] = proyecto;
+                }
+                
+                // Abrir modal directamente sin llamar a verDetalleProyecto (evitar loop)
+                console.log('🎭 Abriendo modal directamente...');
+                try {
+                    abrirModalDetalleDirecto(proyecto);
+                    console.log('✅ Modal abierto correctamente');
+                } catch (error) {
+                    console.error('❌ Error al abrir modal:', error);
+                    alert('Error al abrir modal: ' + error.message);
+                }
+                
+            } else {
+                console.error('❌ Error en respuesta del servidor:', response);
+                mostrarAlerta('Error al cargar los datos del proyecto: ' + (response.mensaje || 'Proyecto no encontrado'), 'error');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('❌ Error AJAX completo:', {xhr: xhr, status: status, error: error});
+            console.error('❌ Texto de respuesta:', xhr.responseText);
+            console.error('❌ Status HTTP:', xhr.status);
+            mostrarAlerta('Error de conexión al cargar el proyecto: ' + error, 'error');
+        }
+    });
+}
+
+/**
+ * Crear modal de detalle dinámicamente si no existe
+ */
+function crearModalDetalleProyectoDinamico() {
+    const modalHtml = `
+    <!-- Modal Ver Detalle del Proyecto (Dinámico) -->
+    <div class="modal fade" id="modalDetalleProyecto" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                    <h5 class="modal-title" id="modalDetalleTitle">
+                        <img src="../icons/16x/ver-violeta16.png" alt="ver-violeta" style="margin-right: 0.5rem;">Detalle del Proyecto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Información principal -->
+                        <div class="col-md-8">
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-info-circle me-2"></i>Información General
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-heading me-1"></i>Título
+                                            </label>
+                                            <p class="fs-5 fw-bold text-dark mb-0" id="detalle-titulo">-</p>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-align-left me-1"></i>Descripción
+                                            </label>
+                                            <p class="text-muted" id="detalle-descripcion">Sin descripción</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-building me-1"></i>Cliente
+                                            </label>
+                                            <p class="mb-0" id="detalle-cliente">Sin asignar</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-tasks me-1"></i>Estado
+                                            </label>
+                                            <span class="badge fs-6" id="detalle-estado">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progreso y fechas -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-chart-line me-2"></i>Progreso y Fechas
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-4">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-percentage me-1"></i>Progreso del Proyecto
+                                            </label>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);" id="detalle-progress-bar"></div>
+                                            </div>
+                                            <div class="text-center mt-2">
+                                                <span class="fs-5 fw-bold text-primary" id="detalle-progreso">0%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-calendar-alt me-1"></i>Fecha de Inicio
+                                            </label>
+                                            <p class="mb-0" id="detalle-fecha-inicio">Sin definir</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-calendar-check me-1"></i>Fecha Estimada
+                                            </label>
+                                            <p class="mb-0" id="detalle-fecha-estimada">Sin definir</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-clock me-1"></i>Estado del Plazo
+                                            </label>
+                                            <p class="mb-0" id="detalle-estado-plazo">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-plus-circle me-1"></i>Fecha de Creación
+                                            </label>
+                                            <p class="mb-0" id="detalle-fecha-creacion">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información lateral -->
+                        <div class="col-md-4">
+                            <!-- Prioridad y presupuesto -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-flag me-2"></i>Prioridad y Presupuesto
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-muted d-block">Prioridad</label>
+                                        <span class="priority-badge fs-6" id="detalle-prioridad">-</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted d-block">
+                                            <i class="fas fa-dollar-sign me-1"></i>Presupuesto
+                                        </label>
+                                        <p class="fs-4 fw-bold text-success mb-0" id="detalle-presupuesto">Sin definir</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información técnica -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-cog me-2"></i>Información Técnica
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted">ID del Proyecto</label>
+                                        <p class="mb-0 font-monospace" id="detalle-id">-</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted">Total de Tareas</label>
+                                        <p class="mb-0" id="detalle-tareas">Sin tareas</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted">Última Actualización</label>
+                                        <p class="mb-0" id="detalle-actualizacion">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+    .priority-badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .priority-alta { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+    .priority-media { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+    .priority-baja { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .priority-critica { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; }
+    </style>
+    `;
+    
+    // Agregar el modal al body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    console.log('✅ Modal dinámico creado');
+}
+
+/**
+ * Abrir modal de detalle directamente con los datos del proyecto (sin recursión)
+ */
+function abrirModalDetalleDirecto(proyecto) {
+    console.log('🔧 Mostrando detalle directo del proyecto:', proyecto.pr_titulo);
+    
+    try {
+        // Verificar que el modal existe
+        const modalElement = document.getElementById('modalDetalleProyecto');
+        if (!modalElement) {
+            throw new Error('Modal modalDetalleProyecto no encontrado en el DOM');
+        }
+        
+        // Verificar elementos críticos del modal
+        const elementosCriticos = [
+            'modalDetalleTitle', 'detalle-titulo', 'detalle-descripcion', 
+            'detalle-cliente', 'detalle-estado', 'detalle-progreso', 
+            'detalle-progress-bar', 'detalle-fecha-inicio', 'detalle-fecha-estimada',
+            'detalle-estado-plazo', 'detalle-prioridad', 'detalle-presupuesto',
+            'detalle-id', 'detalle-tareas', 'detalle-actualizacion', 'detalle-fecha-creacion'
+        ];
+        
+        const elementosFaltantes = [];
+        elementosCriticos.forEach(elementoId => {
+            if (!document.getElementById(elementoId)) {
+                elementosFaltantes.push(elementoId);
+            }
+        });
+        
+        if (elementosFaltantes.length > 0) {
+            console.error('❌ Elementos faltantes en modal:', elementosFaltantes);
+            throw new Error('Modal de detalle incompleto. Elementos faltantes: ' + elementosFaltantes.join(', '));
+        }
+        
+        // Llenar datos del modal
+        llenarDatosModal(proyecto);
+        
+        // Mostrar modal
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        console.log('✅ Modal de detalle abierto correctamente');
+        
+    } catch (error) {
+        console.error('❌ Error al abrir modal de detalle:', error);
+        throw error;
+    }
+}
+
+/**
+ * Llenar los datos del modal con la información del proyecto
+ */
+function llenarDatosModal(proyecto) {
+    console.log('📝 Llenando datos del modal...');
+    
+    // Actualizar título del modal
+    document.getElementById('modalDetalleTitle').innerHTML = 
+        `<i class="fas fa-eye me-2"></i>Detalle del Proyecto: ${proyecto.pr_titulo}`;
+    
+    // Llenar información general
+    document.getElementById('detalle-titulo').textContent = proyecto.pr_titulo;
+    document.getElementById('detalle-descripcion').textContent = proyecto.pr_descripcion || 'Sin descripción';
+    
+    // Cliente (verificar diferentes formatos posibles)
+    let clienteNombre = 'Sin asignar';
+    if (proyecto.cliente_empresa || proyecto.cl_empresa) {
+        clienteNombre = proyecto.cliente_empresa || proyecto.cl_empresa;
+    } else if (proyecto.cl_nombre && proyecto.cl_apellido) {
+        clienteNombre = `${proyecto.cl_nombre} ${proyecto.cl_apellido}`;
+    }
+    document.getElementById('detalle-cliente').textContent = clienteNombre;
+    
+    // Estado con badge apropiado
+    const estadoBadge = document.getElementById('detalle-estado');
+    const estadoTexto = proyecto.pr_estado.replace('_', ' ').toUpperCase();
+    estadoBadge.textContent = estadoTexto;
+    estadoBadge.className = `badge fs-6 ${getEstadoBadgeClass(proyecto.pr_estado)}`;
+    
+    // Progreso
+    const progreso = parseInt(proyecto.pr_progreso) || 0;
+    document.getElementById('detalle-progreso').textContent = `${progreso}%`;
+    document.getElementById('detalle-progress-bar').style.width = `${progreso}%`;
+    
+    // Fechas
+    const fechaInicio = proyecto.pr_fecha_inicio ? 
+        new Date(proyecto.pr_fecha_inicio).toLocaleDateString('es-AR') : 'Sin definir';
+    const fechaEstimada = proyecto.pr_fecha_estimada ? 
+        new Date(proyecto.pr_fecha_estimada).toLocaleDateString('es-AR') : 'Sin definir';
+    const fechaCreacion = proyecto.pr_fecha_creacion ? 
+        new Date(proyecto.pr_fecha_creacion).toLocaleDateString('es-AR') : 'N/A';
+        
+    document.getElementById('detalle-fecha-inicio').textContent = fechaInicio;
+    document.getElementById('detalle-fecha-estimada').textContent = fechaEstimada;
+    document.getElementById('detalle-fecha-creacion').textContent = fechaCreacion;
+    
+    // Estado del plazo
+    let estadoPlazo = '-';
+    let claseEstadoPlazo = '';
+    if (proyecto.pr_fecha_estimada) {
+        const hoy = new Date();
+        const fechaEst = new Date(proyecto.pr_fecha_estimada);
+        const diffTime = fechaEst - hoy;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays > 7) {
+            estadoPlazo = `A tiempo (${diffDays} días restantes)`;
+            claseEstadoPlazo = 'text-success';
+        } else if (diffDays > 0) {
+            estadoPlazo = `Próximo a vencer (${diffDays} días)`;
+            claseEstadoPlazo = 'text-warning fw-bold';
+        } else if (diffDays === 0) {
+            estadoPlazo = 'Vence hoy';
+            claseEstadoPlazo = 'text-warning fw-bold';
+        } else {
+            estadoPlazo = `Vencido (${Math.abs(diffDays)} días)`;
+            claseEstadoPlazo = 'text-danger fw-bold';
+        }
+    }
+    const estadoPlazoElement = document.getElementById('detalle-estado-plazo');
+    estadoPlazoElement.textContent = estadoPlazo;
+    estadoPlazoElement.className = `mb-0 ${claseEstadoPlazo}`;
+    
+    // Prioridad
+    const prioridadBadge = document.getElementById('detalle-prioridad');
+    const prioridadTexto = proyecto.pr_prioridad.charAt(0).toUpperCase() + proyecto.pr_prioridad.slice(1);
+    prioridadBadge.textContent = prioridadTexto;
+    prioridadBadge.className = `priority-badge fs-6 priority-${proyecto.pr_prioridad}`;
+    
+    // Presupuesto
+    const presupuesto = proyecto.pr_presupuesto ? 
+        `$${parseFloat(proyecto.pr_presupuesto).toLocaleString('es-AR')}` : 'Sin definir';
+    document.getElementById('detalle-presupuesto').textContent = presupuesto;
+    
+    // Información técnica
+    document.getElementById('detalle-id').textContent = `#${proyecto.id}`;
+    
+    const tareas = proyecto.total_tareas ? 
+        `${proyecto.tareas_completadas || 0}/${proyecto.total_tareas} completadas` : 'Sin tareas asignadas';
+    document.getElementById('detalle-tareas').textContent = tareas;
+    
+    document.getElementById('detalle-actualizacion').textContent = 'Hace pocos minutos';
+    
+    console.log('✅ Datos del modal llenados correctamente');
+}
+
+// Exponer función para uso desde HTML
+window.verDetalleProyectoDesdeAsignaciones = verDetalleProyectoDesdeAsignaciones;
 
 console.log('ABM Proyectos cargado correctamente');
