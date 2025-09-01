@@ -429,7 +429,7 @@ try {
                                                 ];
                                                 $color = $estado_colors[$proyecto['pr_estado']] ?? 'secondary';
                                                 ?>
-                                                <span class="badge bg-<?php echo $color; ?> bg-opacity-20 text-dark px-3 py-2">
+                                                <span class="badge bg-<?php echo $color; ?> bg-opacity-20 text-white px-3 py-2">
                                                     <?php 
                                                     echo $proyecto['pr_estado'] ? ucfirst(str_replace('_', ' ', $proyecto['pr_estado'])) : 'Sin estado';
                                                     ?>
@@ -444,7 +444,7 @@ try {
                                                 ];
                                                 $color = $prioridad_colors[$proyecto['pr_prioridad']] ?? 'secondary';
                                                 ?>
-                                                <span class="badge bg-<?php echo $color; ?> bg-opacity-20 text-dark">
+                                                <span class="badge bg-<?php echo $color; ?> bg-opacity-20 text-whitead">
                                                     <?php 
                                                     echo $proyecto['pr_prioridad'] ? ucfirst($proyecto['pr_prioridad']) : 'Sin prioridad';
                                                     ?>
