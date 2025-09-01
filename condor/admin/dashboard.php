@@ -1265,8 +1265,437 @@ if (isset($_GET['logout'])) {
 
         // Ver detalle de usuario
         function verDetalleUsuario(usuarioId) {
-            console.log('Ver detalle del usuario:', usuarioId);
-            alert('Funcionalidad en desarrollo: Ver detalle del usuario ' + usuarioId);
+            console.log('🔧 Iniciando verDetalleUsuario para ID:', usuarioId);
+            console.log('🔍 Verificando elemento modal:', document.getElementById('modalDetalleUsuario'));
+            
+            try {
+                // Mostrar spinner en el modal
+                const modalElement = document.getElementById('modalDetalleUsuario');
+                if (!modalElement) {
+                    console.error('❌ Modal modalDetalleUsuario no encontrado');
+                    alert('Error: Modal no encontrado');
+                    return;
+                }
+                
+                const modal = new bootstrap.Modal(modalElement);
+                modal.show();
+                console.log('✅ Modal de detalle mostrado');
+                
+                // Mostrar estado de carga
+                $('#detalle-usuario-titulo').text('Cargando usuario...');
+                $('#modalDetalleUsuario .modal-body').html(`
+                    <div class="text-center p-5">
+                        <div class="spinner-border" style="color: #8b5cf6;" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-3">Cargando información del usuario...</p>
+                    </div>
+                `);
+                console.log('✅ Spinner de carga mostrado');
+
+                // Construir URL completa para debug
+                const baseUrl = window.location.origin + window.location.pathname;
+                const url = '../php/usuarios_info.php';
+                console.log('🌐 Base URL:', baseUrl);
+                console.log('🔗 Petición URL:', url);
+                console.log('📦 Data enviada:', { id: usuarioId });
+
+                // Usar el endpoint de usuarios que ya sabemos que funciona
+                $.ajax({
+                    url: '../php/usuarios.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    timeout: 10000, // 10 segundos de timeout
+                    beforeSend: function(xhr) {
+                        console.log('📤 Enviando petición AJAX a usuarios.php...');
+                    },
+                    success: function(usuarios) {
+                        console.log('📥 Lista de usuarios recibida:', usuarios.length, 'usuarios');
+                        
+                        // Buscar el usuario específico por ID
+                        const usuario = usuarios.find(u => u.id == usuarioId);
+                        
+                        if (usuario) {
+                            console.log('✅ Usuario encontrado:', usuario);
+                            mostrarDetalleUsuario(usuario);
+                            // Cargar estadísticas adicionales
+                            cargarEstadisticasUsuario(usuarioId);
+                        } else {
+                            console.error('❌ Usuario no encontrado con ID:', usuarioId);
+                            mostrarErrorUsuario('Usuario no encontrado en la base de datos');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('❌ Error AJAX completo:', {
+                            status: status,
+                            error: error,
+                            responseText: xhr.responseText,
+                            statusCode: xhr.status,
+                            statusText: xhr.statusText
+                        });
+                        mostrarErrorUsuario(`Error de conexión: ${error} (${xhr.status})`);
+                    }
+                });
+                
+            } catch (e) {
+                console.error('❌ Error en verDetalleUsuario:', e);
+                alert('Error inesperado: ' + e.message);
+            }
+        }
+
+        // Función para mostrar los datos del usuario en el modal
+        function mostrarDetalleUsuario(usuario) {
+            console.log('🎭 Mostrando detalle del usuario:', usuario.us_nombre, usuario.us_apellido);
+            
+            // Restaurar el contenido del modal si fue reemplazado por el spinner
+            restaurarContenidoModalUsuario();
+            
+            // Actualizar título del modal
+            const nombreCompleto = `${usuario.us_nombre || ''} ${usuario.us_apellido || ''}`.trim();
+            $('#detalle-usuario-titulo').text(`Detalle del Usuario: ${nombreCompleto}`);
+            
+            // Llenar información personal
+            $('#detalle-usuario-nombre').text(nombreCompleto || 'Sin nombre');
+            $('#detalle-usuario-username').text(usuario.us_username || 'Sin usuario');
+            $('#detalle-usuario-email').text(usuario.us_email || 'Sin email');
+            $('#detalle-usuario-nacimiento').text(
+                usuario.us_fecha_nacimiento ? 
+                new Date(usuario.us_fecha_nacimiento).toLocaleDateString('es-AR') : 
+                'Sin definir'
+            );
+            $('#detalle-usuario-bio').text(usuario.us_bio || 'Sin biografía disponible');
+            
+            // Llenar información del sistema
+            const rolBadge = obtenerBadgeRolUsuario(usuario.us_rol);
+            $('#detalle-usuario-rol').html(rolBadge);
+            
+            const estadoBadge = usuario.us_activo == 1 ? 
+                '<span class="badge bg-success">Activo</span>' : 
+                '<span class="badge bg-danger">Inactivo</span>';
+            $('#detalle-usuario-estado').html(estadoBadge);
+            
+            $('#detalle-usuario-registro').text(
+                usuario.us_fecha_registro ? 
+                new Date(usuario.us_fecha_registro).toLocaleDateString('es-AR') : 
+                'Sin fecha'
+            );
+            $('#detalle-usuario-actualizacion').text(
+                usuario.fecha_actualizacion ? 
+                new Date(usuario.fecha_actualizacion).toLocaleDateString('es-AR') : 
+                'Sin actualizar'
+            );
+            $('#detalle-usuario-ultimo-acceso').text(
+                usuario.us_fecha_ultimo_acceso ? 
+                new Date(usuario.us_fecha_ultimo_acceso).toLocaleDateString('es-AR') : 
+                'Sin registro'
+            );
+            $('#detalle-usuario-ip').text(usuario.us_ultimo_ip || 'Sin registro');
+            
+            // Información lateral
+            $('#detalle-usuario-id').text(`#${usuario.id}`);
+            
+            // Generar avatar con iniciales
+            const iniciales = obtenerIniciales(nombreCompleto);
+            const colorAvatar = generarColorAvatar(usuario.id);
+            $('#detalle-usuario-avatar').html(iniciales).css('background', colorAvatar);
+            
+            // Manejar foto de perfil si existe
+            if (usuario.us_foto_perfil) {
+                $('#detalle-usuario-foto img').attr('src', usuario.us_foto_perfil);
+                $('#detalle-usuario-foto').show();
+                $('#detalle-usuario-avatar').hide();
+            } else {
+                $('#detalle-usuario-foto').hide();
+                $('#detalle-usuario-avatar').show();
+            }
+            
+            // Manejar URL de perfil
+            if (usuario.us_url_perfil) {
+                $('#detalle-usuario-url-container').html(`
+                    <a href="${usuario.us_url_perfil}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-external-link-alt me-1"></i>Ver Perfil
+                    </a>
+                `);
+            } else {
+                $('#detalle-usuario-url-container').html('<small class="text-muted">Sin URL de perfil</small>');
+            }
+            
+            // Almacenar ID del usuario para las funciones de botones
+            window.currentUserDetailId = usuario.id;
+            
+            console.log('✅ Detalle del usuario mostrado correctamente');
+        }
+
+        // Función para mostrar error al cargar usuario
+        function mostrarErrorUsuario(mensaje) {
+            $('#detalle-usuario-titulo').text('Error al cargar usuario');
+            $('#modalDetalleUsuario .modal-body').html(`
+                <div class="text-center p-5">
+                    <i class="fas fa-exclamation-triangle text-danger mb-3" style="font-size: 48px;"></i>
+                    <h5 class="text-danger">Error al cargar usuario</h5>
+                    <p class="text-muted">${mensaje}</p>
+                    <button class="btn btn-secondary" onclick="$('#modalDetalleUsuario').modal('hide')">
+                        <i class="fas fa-times me-1"></i>Cerrar
+                    </button>
+                </div>
+            `);
+        }
+
+        // Función para restaurar el contenido original del modal
+        function restaurarContenidoModalUsuario() {
+            // Solo restaurar si el contenido fue reemplazado por el spinner
+            if ($('#modalDetalleUsuario .modal-body .spinner-border').length > 0) {
+                $('#modalDetalleUsuario .modal-body').html(`
+                    <div class="row">
+                        <!-- Información principal del usuario -->
+                        <div class="col-md-8">
+                            <!-- Información Personal -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-user-circle me-2"></i>Información Personal
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-id-card me-1"></i>Nombre Completo
+                                            </label>
+                                            <p class="fs-5 fw-bold text-dark mb-0" id="detalle-usuario-nombre">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-at me-1"></i>Usuario
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-username">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-email">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-birthday-cake me-1"></i>Fecha de Nacimiento
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-nacimiento">-</p>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>Biografía
+                                            </label>
+                                            <p class="text-muted" id="detalle-usuario-bio">Sin biografía disponible</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información del Sistema -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-cogs me-2"></i>Información del Sistema
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-user-tag me-1"></i>Rol
+                                            </label>
+                                            <span class="badge fs-6" id="detalle-usuario-rol">-</span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-toggle-on me-1"></i>Estado
+                                            </label>
+                                            <span class="badge fs-6" id="detalle-usuario-estado">-</span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-calendar-plus me-1"></i>Fecha de Registro
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-registro">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-clock me-1"></i>Última Actualización
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-actualizacion">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-sign-in-alt me-1"></i>Último Acceso
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-ultimo-acceso">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-network-wired me-1"></i>Última IP
+                                            </label>
+                                            <p class="mb-0 font-monospace" id="detalle-usuario-ip">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información lateral -->
+                        <div class="col-md-4">
+                            <!-- Avatar y Estado -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-image me-2"></i>Perfil
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="mb-4">
+                                        <div id="detalle-usuario-avatar" class="mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                                            U
+                                        </div>
+                                        <div id="detalle-usuario-foto" style="display: none;">
+                                            <img src="" alt="Foto de perfil" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted d-block">ID del Usuario</label>
+                                        <p class="fs-4 fw-bold text-primary mb-0" id="detalle-usuario-id">#-</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted d-block">
+                                            <i class="fas fa-link me-1"></i>URL de Perfil
+                                        </label>
+                                        <div id="detalle-usuario-url-container">
+                                            <small class="text-muted">Sin URL de perfil</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estadísticas -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <div class="h3 text-success mb-1" id="detalle-usuario-proyectos-total">0</div>
+                                        <small class="text-muted">Proyectos Asignados</small>
+                                    </div>
+                                    <div class="text-center mb-3">
+                                        <div class="h3 text-warning mb-1" id="detalle-usuario-horas-total">0</div>
+                                        <small class="text-muted">Horas Asignadas</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="h3 text-info mb-1" id="detalle-usuario-roles-total">0</div>
+                                        <small class="text-muted">Roles Diferentes</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-tools me-2"></i>Acciones
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-success btn-sm" onclick="gestionarAsignacionesUsuarioDesdeDetalle()" id="btn-gestionar-asignaciones-usuario">
+                                            <i class="fas fa-users-cog me-2"></i>Gestionar Asignaciones
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="editarUsuarioDesdeDetalle()" id="btn-editar-usuario">
+                                            <i class="fas fa-edit me-2"></i>Editar Usuario
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm" onclick="verHistorialUsuario()" id="btn-historial-usuario">
+                                            <i class="fas fa-history me-2"></i>Ver Historial
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+        }
+
+        // Función para cargar estadísticas adicionales del usuario
+        function cargarEstadisticasUsuario(usuarioId) {
+            console.log('📊 Cargando estadísticas del usuario:', usuarioId);
+            
+            // Obtener estadísticas desde el endpoint de asignaciones
+            $.ajax({
+                url: 'php/asignaciones_proyectos.php',
+                method: 'GET',
+                data: { 
+                    accion: 'obtener_estadisticas_usuario',
+                    usuario_id: usuarioId 
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.exito && response.estadisticas) {
+                        const stats = response.estadisticas;
+                        $('#detalle-usuario-proyectos-total').text(stats.total_proyectos || 0);
+                        $('#detalle-usuario-horas-total').text(stats.total_horas || 0);
+                        $('#detalle-usuario-roles-total').text(stats.roles_diferentes || 0);
+                        console.log('✅ Estadísticas cargadas:', stats);
+                    } else {
+                        console.log('⚠️ No se pudieron cargar las estadísticas del usuario');
+                        // Mantener valores en 0 si no hay estadísticas
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('❌ Error al cargar estadísticas:', error);
+                    // Mantener valores en 0 en caso de error
+                }
+            });
+        }
+
+        // Función para obtener badge del rol del usuario
+        function obtenerBadgeRolUsuario(rol) {
+            const roles = {
+                'admin': '<span class="badge bg-danger">Administrador</span>',
+                'manager': '<span class="badge bg-warning">Manager</span>',
+                'developer': '<span class="badge bg-primary">Desarrollador</span>',
+                'client': '<span class="badge bg-info">Cliente</span>',
+                'user': '<span class="badge bg-secondary">Usuario</span>'
+            };
+            return roles[rol] || `<span class="badge bg-secondary">${rol || 'Sin rol'}</span>`;
+        }
+
+        // Funciones para los botones de acción del modal
+        function gestionarAsignacionesUsuarioDesdeDetalle() {
+            if (window.currentUserDetailId) {
+                // Cerrar modal de detalle
+                $('#modalDetalleUsuario').modal('hide');
+                
+                // Abrir modal de gestión de asignaciones
+                setTimeout(() => {
+                    gestionarAsignacionesUsuario(window.currentUserDetailId);
+                }, 300);
+            }
+        }
+
+        function editarUsuarioDesdeDetalle() {
+            if (window.currentUserDetailId) {
+                console.log('🔧 Editar usuario:', window.currentUserDetailId);
+                alert('Funcionalidad de edición de usuario en desarrollo');
+                // Aquí se implementaría la funcionalidad de edición
+            }
+        }
+
+        function verHistorialUsuario() {
+            if (window.currentUserDetailId) {
+                console.log('📜 Ver historial del usuario:', window.currentUserDetailId);
+                alert('Funcionalidad de historial de usuario en desarrollo');
+                // Aquí se implementaría la funcionalidad de historial
+            }
         }
 
         // Gestionar asignaciones de usuario
@@ -3371,6 +3800,277 @@ if (isset($_GET['logout'])) {
             #modalGestionAsignaciones .btn-group .btn {
                 padding: 0.5rem;
                 font-size: 0.8rem;
+            }
+        }
+    </style>
+
+    <!-- Modal para Ver Detalle del Usuario -->
+    <div class="modal fade" id="modalDetalleUsuario" tabindex="-1" aria-labelledby="modalDetalleUsuarioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                    <h4 class="modal-title" id="modalDetalleUsuarioLabel">
+                        <i class="fas fa-user me-2"></i>
+                        <span id="detalle-usuario-titulo">Detalle del Usuario</span>
+                    </h4>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <div class="row">
+                        <!-- Información principal del usuario -->
+                        <div class="col-md-8">
+                            <!-- Información Personal -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-user-circle me-2"></i>Información Personal
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-id-card me-1"></i>Nombre Completo
+                                            </label>
+                                            <p class="fs-5 fw-bold text-dark mb-0" id="detalle-usuario-nombre">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-at me-1"></i>Usuario
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-username">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-envelope me-1"></i>Email
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-email">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-birthday-cake me-1"></i>Fecha de Nacimiento
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-nacimiento">-</p>
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>Biografía
+                                            </label>
+                                            <p class="text-muted" id="detalle-usuario-bio">Sin biografía disponible</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información del Sistema -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-cogs me-2"></i>Información del Sistema
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-user-tag me-1"></i>Rol
+                                            </label>
+                                            <span class="badge fs-6" id="detalle-usuario-rol">-</span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-toggle-on me-1"></i>Estado
+                                            </label>
+                                            <span class="badge fs-6" id="detalle-usuario-estado">-</span>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-calendar-plus me-1"></i>Fecha de Registro
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-registro">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-clock me-1"></i>Última Actualización
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-actualizacion">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-sign-in-alt me-1"></i>Último Acceso
+                                            </label>
+                                            <p class="mb-0" id="detalle-usuario-ultimo-acceso">-</p>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold text-muted">
+                                                <i class="fas fa-network-wired me-1"></i>Última IP
+                                            </label>
+                                            <p class="mb-0 font-monospace" id="detalle-usuario-ip">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información lateral -->
+                        <div class="col-md-4">
+                            <!-- Avatar y Estado -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-image me-2"></i>Perfil
+                                    </h6>
+                                </div>
+                                <div class="card-body text-center">
+                                    <div class="mb-4">
+                                        <div id="detalle-usuario-avatar" class="mx-auto mb-3" style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 36px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                                            U
+                                        </div>
+                                        <div id="detalle-usuario-foto" style="display: none;">
+                                            <img src="" alt="Foto de perfil" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted d-block">ID del Usuario</label>
+                                        <p class="fs-4 fw-bold text-primary mb-0" id="detalle-usuario-id">#-</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold text-muted d-block">
+                                            <i class="fas fa-link me-1"></i>URL de Perfil
+                                        </label>
+                                        <div id="detalle-usuario-url-container">
+                                            <small class="text-muted">Sin URL de perfil</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Estadísticas -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <div class="h3 text-success mb-1" id="detalle-usuario-proyectos-total">0</div>
+                                        <small class="text-muted">Proyectos Asignados</small>
+                                    </div>
+                                    <div class="text-center mb-3">
+                                        <div class="h3 text-warning mb-1" id="detalle-usuario-horas-total">0</div>
+                                        <small class="text-muted">Horas Asignadas</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="h3 text-info mb-1" id="detalle-usuario-roles-total">0</div>
+                                        <small class="text-muted">Roles Diferentes</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0 text-primary">
+                                        <i class="fas fa-tools me-2"></i>Acciones
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-success btn-sm" onclick="gestionarAsignacionesUsuarioDesdeDetalle()" id="btn-gestionar-asignaciones-usuario">
+                                            <i class="fas fa-users-cog me-2"></i>Gestionar Asignaciones
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="editarUsuarioDesdeDetalle()" id="btn-editar-usuario">
+                                            <i class="fas fa-edit me-2"></i>Editar Usuario
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm" onclick="verHistorialUsuario()" id="btn-historial-usuario">
+                                            <i class="fas fa-history me-2"></i>Ver Historial
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos específicos para el modal de detalle del usuario */
+        #modalDetalleUsuario .modal-content {
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        #modalDetalleUsuario .modal-header {
+            border-radius: 15px 15px 0 0;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+        }
+
+        #modalDetalleUsuario .card {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        #modalDetalleUsuario .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        #modalDetalleUsuario .badge {
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        #modalDetalleUsuario .badge.bg-success {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+        }
+
+        #modalDetalleUsuario .badge.bg-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        }
+
+        #modalDetalleUsuario .badge.bg-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+        }
+
+        #modalDetalleUsuario .badge.bg-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            color: white !important;
+        }
+
+        #modalDetalleUsuario .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #modalDetalleUsuario .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            #modalDetalleUsuario .modal-header,
+            #modalDetalleUsuario .modal-footer {
+                padding: 1rem;
+            }
+
+            #modalDetalleUsuario .card-body {
+                padding: 1rem;
             }
         }
     </style>

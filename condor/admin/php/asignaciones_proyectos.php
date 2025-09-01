@@ -109,6 +109,10 @@ function procesarAccion() {
             listarUsuarios();
             break;
             
+        case 'obtener_estadisticas_usuario':
+            obtenerEstadisticasUsuario();
+            break;
+            
         default:
             throw new Exception('Acción no válida: ' . $accion);
     }
@@ -914,6 +918,100 @@ function listarUsuarios() {
         'usuarios' => $usuarios,
         'total' => count($usuarios)
     ]);
+}
+
+/**
+ * ================================================
+ * FUNCIÓN: obtenerEstadisticasUsuario
+ * ================================================
+ * Obtiene estadísticas de asignaciones para un usuario específico
+ * Incluye: total proyectos asignados, horas totales, roles diferentes
+ */
+function obtenerEstadisticasUsuario() {
+    global $pdo;
+    
+    try {
+        // Validar parámetros
+        $usuario_id = $_GET['usuario_id'] ?? $_POST['usuario_id'] ?? null;
+        
+        if (!$usuario_id) {
+            throw new Exception('ID de usuario requerido');
+        }
+        
+        if (!is_numeric($usuario_id)) {
+            throw new Exception('ID de usuario inválido');
+        }
+        
+        error_log("Obteniendo estadísticas para usuario ID: " . $usuario_id);
+        
+        // Consulta para obtener estadísticas del usuario
+        $sql = "SELECT 
+                    COUNT(DISTINCT ap.proyecto_id) as total_proyectos,
+                    COALESCE(SUM(ap.horas_asignadas), 0) as total_horas,
+                    COUNT(DISTINCT ap.rol_en_proyecto) as roles_diferentes,
+                    COUNT(CASE WHEN ap.estado_asignacion = 'activo' THEN 1 END) as asignaciones_activas,
+                    COUNT(CASE WHEN ap.estado_asignacion = 'completado' THEN 1 END) as asignaciones_completadas,
+                    GROUP_CONCAT(DISTINCT ap.rol_en_proyecto ORDER BY ap.rol_en_proyecto) as roles_lista
+                FROM asignacion_proyectos ap
+                WHERE ap.usuario_id = :usuario_id";
+        
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':usuario_id' => $usuario_id]);
+        $estadisticas = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Si no hay asignaciones, devolver valores en cero
+        if (!$estadisticas || $estadisticas['total_proyectos'] == 0) {
+            $estadisticas = [
+                'total_proyectos' => 0,
+                'total_horas' => 0,
+                'roles_diferentes' => 0,
+                'asignaciones_activas' => 0,
+                'asignaciones_completadas' => 0,
+                'roles_lista' => null
+            ];
+        }
+        
+        // Obtener información adicional de proyectos activos
+        $sql_proyectos = "SELECT 
+                            p.pr_titulo,
+                            ap.rol_en_proyecto,
+                            ap.horas_asignadas,
+                            ap.estado_asignacion,
+                            ap.fecha_asignacion
+                        FROM asignacion_proyectos ap
+                        JOIN proyectos p ON ap.proyecto_id = p.id
+                        WHERE ap.usuario_id = :usuario_id
+                        AND ap.estado_asignacion = 'activo'
+                        ORDER BY ap.fecha_asignacion DESC";
+        
+        $stmt_proyectos = $pdo->prepare($sql_proyectos);
+        $stmt_proyectos->execute([':usuario_id' => $usuario_id]);
+        $proyectos_activos = $stmt_proyectos->fetchAll(PDO::FETCH_ASSOC);
+        
+        error_log("Estadísticas obtenidas: " . json_encode($estadisticas));
+        
+        echo json_encode([
+            'exito' => true,
+            'estadisticas' => $estadisticas,
+            'proyectos_activos' => $proyectos_activos,
+            'mensaje' => 'Estadísticas obtenidas correctamente'
+        ]);
+        
+    } catch (Exception $e) {
+        error_log("Error en obtenerEstadisticasUsuario: " . $e->getMessage());
+        echo json_encode([
+            'exito' => false,
+            'mensaje' => 'Error al obtener estadísticas: ' . $e->getMessage(),
+            'estadisticas' => [
+                'total_proyectos' => 0,
+                'total_horas' => 0,
+                'roles_diferentes' => 0,
+                'asignaciones_activas' => 0,
+                'asignaciones_completadas' => 0,
+                'roles_lista' => null
+            ]
+        ]);
+    }
 }
 
 ?>
