@@ -147,15 +147,15 @@ try {
                             </p>
                         </div>
                         <div class="col-md-4 text-end">
-                            <div class="bg-white bg-opacity-20 rounded-3 p-3 d-inline-block">
+                            <div style="padding: 1rem;  ">
                                 <?php if (isset($_SESSION['us_foto_perfil']) && $_SESSION['us_foto_perfil']): ?>
                                     <img src="../<?php echo htmlspecialchars($_SESSION['us_foto_perfil']); ?>" 
-                                         class="rounded-circle" width="60" height="60" alt="Foto de perfil"
-                                         style="object-fit: cover;"
+                                         class="rounded-circle" width="100" height="100" alt="Foto de perfil"
+                                         style="box-shadow: 0 4px 8px rgba(0,0,0,0.2); border: 2px solid black; object-fit: cover;"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <?php else: ?>
                                     <div class="rounded-circle d-flex align-items-center justify-content-center bg-white" 
-                                         style="width: 60px; height: 60px;">
+                                         style="width: 100px; height: 100px;">
                                         <i class="fas fa-user fa-2x text-secondary"></i>
                                     </div>
                                 <?php endif; ?>
