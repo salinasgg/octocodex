@@ -151,10 +151,11 @@
         box-shadow: var(--shadow);
         display: flex;
         flex-direction: column;
-        max-height: calc(100vh - 250px);
         border: 1px solid var(--border-color);
         position: relative;
         z-index: 1;
+        height: fit-content;
+        min-height: 400px;
     }
 
     .column-header {
@@ -192,10 +193,11 @@
     .projects-container {
         padding: 25px;
         flex: 1;
-        overflow-y: auto;
         display: flex;
         flex-direction: column;
         gap: 20px;
+        overflow: visible;
+        min-height: 200px;
     }
 
     .project-card {
@@ -478,7 +480,6 @@
 
     /* Asegurar que todos los dropdowns estén por encima */
     .projects-container {
-        overflow: visible;
         z-index: 1;
     }
 
