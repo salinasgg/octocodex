@@ -1317,6 +1317,12 @@ if (isset($_GET['logout'])) {
                         
                         if (usuario) {
                             console.log('✅ Usuario encontrado:', usuario);
+                            console.log('📋 Campos del usuario:', Object.keys(usuario));
+                            console.log('🖼️ Foto de perfil específica:', {
+                                campo: 'us_foto_perfil',
+                                valor: usuario.us_foto_perfil,
+                                tipo: typeof usuario.us_foto_perfil
+                            });
                             mostrarDetalleUsuario(usuario);
                             // Cargar estadísticas adicionales
                             cargarEstadisticasUsuario(usuarioId);
@@ -1400,11 +1406,37 @@ if (isset($_GET['logout'])) {
             $('#detalle-usuario-avatar').html(iniciales).css('background', colorAvatar);
             
             // Manejar foto de perfil si existe
-            if (usuario.us_foto_perfil) {
-                $('#detalle-usuario-foto img').attr('src', usuario.us_foto_perfil);
+            console.log('📸 Procesando foto de perfil:', {
+                us_foto_perfil: usuario.us_foto_perfil,
+                tipo: typeof usuario.us_foto_perfil,
+                existe: !!usuario.us_foto_perfil,
+                longitud: usuario.us_foto_perfil ? usuario.us_foto_perfil.length : 0
+            });
+            
+            if (usuario.us_foto_perfil && usuario.us_foto_perfil.trim() !== '' && usuario.us_foto_perfil !== null) {
+                let fotoUrl = usuario.us_foto_perfil;
+                
+                // Si la ruta no es absoluta, construir ruta relativa
+                if (!fotoUrl.startsWith('http') && !fotoUrl.startsWith('/')) {
+                    fotoUrl = '../uploads/usuarios/' + fotoUrl;
+                }
+                
+                console.log('📸 Configurando imagen con URL:', fotoUrl);
+                $('#detalle-usuario-foto img').attr('src', fotoUrl);
                 $('#detalle-usuario-foto').show();
                 $('#detalle-usuario-avatar').hide();
+                
+                // Verificar si la imagen carga correctamente
+                $('#detalle-usuario-foto img').on('load', function() {
+                    console.log('✅ Imagen cargada correctamente:', fotoUrl);
+                }).on('error', function() {
+                    console.error('❌ Error al cargar imagen:', fotoUrl);
+                    // Si hay error, mostrar avatar con iniciales
+                    $('#detalle-usuario-foto').hide();
+                    $('#detalle-usuario-avatar').show();
+                });
             } else {
+                console.log('📸 Sin foto de perfil, mostrando avatar con iniciales');
                 $('#detalle-usuario-foto').hide();
                 $('#detalle-usuario-avatar').show();
             }

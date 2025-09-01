@@ -184,17 +184,39 @@ function obtenerAsignacionesProyecto() {
         throw new Exception('ID de proyecto requerido');
     }
     
-    $sql = "SELECT * FROM vista_asignaciones_detalle 
-            WHERE proyecto_id = :proyecto_id 
+    // Usar consulta directa en lugar de vista por compatibilidad
+    $sql = "SELECT 
+                ap.id as asignacion_id,
+                ap.proyecto_id,
+                ap.usuario_id,
+                ap.rol_proyecto,
+                ap.estado_asignacion,
+                ap.fecha_asignacion,
+                ap.fecha_inicio,
+                ap.fecha_fin,
+                ap.horas_asignadas,
+                ap.horas_trabajadas,
+                ap.notas,
+                p.pr_titulo as proyecto_titulo,
+                p.pr_estado as proyecto_estado,
+                p.pr_prioridad as proyecto_prioridad,
+                u.us_nombre as usuario_nombre,
+                u.us_apellido as usuario_apellido,
+                u.us_email as usuario_email,
+                CONCAT(u.us_nombre, ' ', u.us_apellido) as nombre_completo
+            FROM asignaciones_proyectos ap
+            INNER JOIN proyectos p ON ap.proyecto_id = p.id
+            INNER JOIN usuarios u ON ap.usuario_id = u.id
+            WHERE ap.proyecto_id = :proyecto_id 
             ORDER BY 
-                CASE rol_proyecto 
+                CASE ap.rol_proyecto 
                     WHEN 'lider' THEN 1 
                     WHEN 'desarrollador' THEN 2 
                     WHEN 'consultor' THEN 3 
                     WHEN 'revisor' THEN 4 
                     ELSE 5 
                 END,
-                fecha_asignacion DESC";
+                ap.fecha_asignacion DESC";
     
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':proyecto_id', $proyecto_id, PDO::PARAM_INT);
@@ -311,7 +333,26 @@ function asignarUsuarioProyecto() {
             
             // Obtener detalles de la asignación creada
             try {
-                $detail_sql = "SELECT * FROM vista_asignaciones_detalle WHERE asignacion_id = :id";
+                $detail_sql = "SELECT 
+                    ap.id as asignacion_id,
+                    ap.proyecto_id,
+                    ap.usuario_id,
+                    ap.rol_proyecto,
+                    ap.estado_asignacion,
+                    ap.fecha_asignacion,
+                    ap.fecha_inicio,
+                    ap.fecha_fin,
+                    ap.horas_asignadas,
+                    ap.horas_trabajadas,
+                    ap.notas,
+                    p.pr_titulo as proyecto_titulo,
+                    u.us_nombre as usuario_nombre,
+                    u.us_apellido as usuario_apellido,
+                    CONCAT(u.us_nombre, ' ', u.us_apellido) as nombre_completo
+                FROM asignaciones_proyectos ap
+                INNER JOIN proyectos p ON ap.proyecto_id = p.id
+                INNER JOIN usuarios u ON ap.usuario_id = u.id
+                WHERE ap.id = :id";
                 $detail_stmt = $pdo->prepare($detail_sql);
                 $detail_stmt->bindParam(':id', $asignacion_id, PDO::PARAM_INT);
                 $detail_stmt->execute();
@@ -673,9 +714,31 @@ function obtenerAsignacionesUsuario() {
         throw new Exception('ID de usuario requerido');
     }
     
-    $sql = "SELECT * FROM vista_asignaciones_detalle 
-            WHERE usuario_id = :usuario_id 
-            ORDER BY fecha_asignacion DESC";
+    // Usar consulta directa en lugar de vista por compatibilidad
+    $sql = "SELECT 
+                ap.id as asignacion_id,
+                ap.proyecto_id,
+                ap.usuario_id,
+                ap.rol_proyecto,
+                ap.estado_asignacion,
+                ap.fecha_asignacion,
+                ap.fecha_inicio,
+                ap.fecha_fin,
+                ap.horas_asignadas,
+                ap.horas_trabajadas,
+                ap.notas,
+                p.pr_titulo as proyecto_titulo,
+                p.pr_estado as proyecto_estado,
+                p.pr_prioridad as proyecto_prioridad,
+                u.us_nombre as usuario_nombre,
+                u.us_apellido as usuario_apellido,
+                u.us_email as usuario_email,
+                CONCAT(u.us_nombre, ' ', u.us_apellido) as nombre_completo
+            FROM asignaciones_proyectos ap
+            INNER JOIN proyectos p ON ap.proyecto_id = p.id
+            INNER JOIN usuarios u ON ap.usuario_id = u.id
+            WHERE ap.usuario_id = :usuario_id 
+            ORDER BY ap.fecha_asignacion DESC";
     
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':usuario_id', $usuario_id, PDO::PARAM_INT);
@@ -948,11 +1011,11 @@ function obtenerEstadisticasUsuario() {
         $sql = "SELECT 
                     COUNT(DISTINCT ap.proyecto_id) as total_proyectos,
                     COALESCE(SUM(ap.horas_asignadas), 0) as total_horas,
-                    COUNT(DISTINCT ap.rol_en_proyecto) as roles_diferentes,
+                    COUNT(DISTINCT ap.rol_proyecto) as roles_diferentes,
                     COUNT(CASE WHEN ap.estado_asignacion = 'activo' THEN 1 END) as asignaciones_activas,
                     COUNT(CASE WHEN ap.estado_asignacion = 'completado' THEN 1 END) as asignaciones_completadas,
-                    GROUP_CONCAT(DISTINCT ap.rol_en_proyecto ORDER BY ap.rol_en_proyecto) as roles_lista
-                FROM asignacion_proyectos ap
+                    GROUP_CONCAT(DISTINCT ap.rol_proyecto ORDER BY ap.rol_proyecto) as roles_lista
+                FROM asignaciones_proyectos ap
                 WHERE ap.usuario_id = :usuario_id";
         
         $stmt = $pdo->prepare($sql);
@@ -974,11 +1037,11 @@ function obtenerEstadisticasUsuario() {
         // Obtener información adicional de proyectos activos
         $sql_proyectos = "SELECT 
                             p.pr_titulo,
-                            ap.rol_en_proyecto,
+                            ap.rol_proyecto,
                             ap.horas_asignadas,
                             ap.estado_asignacion,
                             ap.fecha_asignacion
-                        FROM asignacion_proyectos ap
+                        FROM asignaciones_proyectos ap
                         JOIN proyectos p ON ap.proyecto_id = p.id
                         WHERE ap.usuario_id = :usuario_id
                         AND ap.estado_asignacion = 'activo'
